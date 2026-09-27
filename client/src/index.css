@@ -1,0 +1,427 @@
+/* ==========================================================================
+   QureFlow Winter Arctic Frost Design System
+   Pure Custom CSS (No Tailwind) + Framer Motion Ready
+   ========================================================================== */
+
+:root {
+  /* Brand Foundation: Winter Arctic Frost */
+  --frost-navy: #071629;          /* Deep frozen midnight (headings, top bar) */
+  --deep-winter-blue: #17345C;    /* Rich cold primary (primary CTAs, tokens) */
+  --icy-steel: #9DB7D5;           /* Cool metallic accent (borders, dividers) */
+  --frost-mist: #EAF4FF;          /* Light icy canvas background */
+  --snow-white: #FFFFFF;          /* Pure sterile surface (cards, dialogs) */
+  --midnight-obsidian: #050B14;   /* High-contrast canvas / border */
+  --slate-frost: #475569;         /* Muted typography */
+
+  /* Semantic UI Tokens (Light Mode Default) */
+  --background: var(--frost-mist);
+  --foreground: var(--frost-navy);
+
+  --surface: var(--snow-white);
+  --surface-subtle: #F4F9FF;
+  --surface-border: #D4E4F5;
+
+  --primary: var(--deep-winter-blue);
+  --primary-hover: var(--frost-navy);
+  --primary-foreground: var(--snow-white);
+
+  --secondary: var(--frost-mist);
+  --secondary-hover: #D8ECFF;
+  --secondary-foreground: var(--deep-winter-blue);
+
+  --accent: var(--icy-steel);
+  --accent-foreground: var(--frost-navy);
+
+  --muted: #EEF5FC;
+  --muted-foreground: var(--slate-frost);
+
+  --border: #D4E4F5;
+  --input-bg: var(--snow-white);
+  --input-border: #D4E4F5;
+  --ring: var(--deep-winter-blue);
+
+  /* Feedback Colors */
+  --success: #10B981;
+  --success-bg: #ECFDF5;
+  --success-border: #A7F3D0;
+  --success-text: #047857;
+
+  --warning: #F59E0B;
+  --warning-bg: #FFFBEB;
+  --warning-border: #FDE68A;
+  --warning-text: #B45309;
+
+  --error: #EF4444;
+  --error-bg: #FEF2F2;
+  --error-border: #FECACA;
+  --error-text: #B91C1C;
+
+  /* Strict Unified Radius */
+  --radius: 8px;
+
+  /* Typography */
+  --font-heading: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  /* Shadows */
+  --shadow-card: 0 1px 3px rgba(7, 22, 41, 0.05), 0 1px 2px rgba(7, 22, 41, 0.03);
+  --shadow-elevated: 0 4px 14px rgba(7, 22, 41, 0.08), 0 2px 4px rgba(7, 22, 41, 0.04);
+  --shadow-glow: 0 0 15px rgba(23, 52, 92, 0.12);
+
+  /* Transitions */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ==========================================================================
+   Dark Mode Flipped-Ratio Architecture
+   ========================================================================== */
+.dark, [data-theme="dark"] {
+  --background: var(--frost-navy);
+  --foreground: var(--snow-white);
+
+  --surface: #0D1F38;
+  --surface-subtle: #122846;
+  --surface-border: rgba(157, 183, 213, 0.22);
+
+  --primary: var(--icy-steel);
+  --primary-hover: var(--snow-white);
+  --primary-foreground: var(--frost-navy);
+
+  --secondary: var(--deep-winter-blue);
+  --secondary-hover: #1c3e6d;
+  --secondary-foreground: var(--snow-white);
+
+  --accent: var(--deep-winter-blue);
+  --accent-foreground: var(--snow-white);
+
+  --muted: #112540;
+  --muted-foreground: var(--icy-steel);
+
+  --border: rgba(157, 183, 213, 0.22);
+  --input-bg: #0D1F38;
+  --input-border: rgba(157, 183, 213, 0.25);
+  --ring: var(--icy-steel);
+
+  --success-bg: #064E3B;
+  --success-border: #059669;
+  --success-text: #34D399;
+
+  --warning-bg: #78350F;
+  --warning-border: #D97706;
+  --warning-text: #FBBF24;
+
+  --error-bg: #7F1D1D;
+  --error-border: #DC2626;
+  --error-text: #F87171;
+
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.35);
+  --shadow-elevated: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+/* ==========================================================================
+   Global Reset & Base Elements
+   ========================================================================== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-color: var(--border);
+}
+
+html, body {
+  min-height: 100vh;
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  color: var(--foreground);
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+  font-size: inherit;
+  outline: none;
+}
+
+/* ==========================================================================
+   Typography Hierarchy
+   ========================================================================== */
+.display-hero {
+  font-family: var(--font-heading);
+  font-size: 40px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.text-h1 {
+  font-family: var(--font-heading);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.text-h2 {
+  font-family: var(--font-heading);
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.text-h3 {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.text-muted {
+  color: var(--muted-foreground);
+}
+
+.text-caption {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--muted-foreground);
+}
+
+/* ==========================================================================
+   UI Components (Strict 8px Radius Architecture)
+   ========================================================================== */
+
+/* --- Buttons --- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 20px;
+  border-radius: var(--radius);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+  user-select: none;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+  box-shadow: 0 2px 8px rgba(7, 22, 41, 0.18);
+}
+
+.btn-secondary {
+  background-color: var(--secondary);
+  color: var(--secondary-foreground);
+  border: 1px solid var(--border);
+}
+
+.btn-secondary:hover {
+  background-color: var(--secondary-hover);
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: var(--foreground);
+  border: 1px solid var(--border);
+}
+
+.btn-outline:hover {
+  background-color: var(--surface-subtle);
+  border-color: var(--accent);
+}
+
+.btn-destructive {
+  background-color: var(--error-bg);
+  color: var(--error-text);
+  border: 1px solid var(--error-border);
+}
+
+.btn-destructive:hover {
+  background-color: #FEE2E2;
+}
+
+.btn-sm {
+  height: 34px;
+  padding: 0 14px;
+  font-size: 13px;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+/* --- Cards --- */
+.card {
+  background-color: var(--surface);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow-card);
+  transition: box-shadow var(--transition-normal);
+}
+
+.card-elevated {
+  box-shadow: var(--shadow-elevated);
+}
+
+/* Inset 4px indicator for active queue token cards */
+.card-active-token {
+  border-left: 4px solid var(--deep-winter-blue);
+  background-color: var(--surface);
+}
+
+/* --- Form Controls --- */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.form-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.form-input {
+  height: 44px;
+  padding: 0 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--input-border);
+  background-color: var(--input-bg);
+  color: var(--foreground);
+  font-size: 15px;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.form-input::placeholder {
+  color: var(--icy-steel);
+}
+
+.form-input:focus {
+  border-color: var(--ring);
+  box-shadow: 0 0 0 3px rgba(23, 52, 92, 0.15);
+}
+
+.form-input.error {
+  border-color: var(--error);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+}
+
+.form-error {
+  font-size: 12px;
+  color: var(--error-text);
+  font-weight: 500;
+}
+
+/* --- Badges --- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: var(--radius);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge-blue {
+  background-color: var(--frost-mist);
+  color: var(--deep-winter-blue);
+  border: 1px solid var(--border);
+}
+
+.badge-green {
+  background-color: var(--success-bg);
+  color: var(--success-text);
+  border: 1px solid var(--success-border);
+}
+
+.badge-amber {
+  background-color: var(--warning-bg);
+  color: var(--warning-text);
+  border: 1px solid var(--warning-border);
+}
+
+.badge-red {
+  background-color: var(--error-bg);
+  color: var(--error-text);
+  border: 1px solid var(--error-border);
+}
+
+/* ==========================================================================
+   Convenience Layout Helpers
+   ========================================================================== */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.container-mobile {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.flex { display: flex; }
+.flex-col { display: flex; flex-direction: column; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.justify-center { justify-content: center; }
+.gap-1 { gap: 4px; }
+.gap-2 { gap: 8px; }
+.gap-3 { gap: 12px; }
+.gap-4 { gap: 16px; }
+.gap-6 { gap: 24px; }
+.w-full { width: 100%; }
+
+/* Micro-animations */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}

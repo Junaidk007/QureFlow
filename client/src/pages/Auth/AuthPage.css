@@ -1,0 +1,270 @@
+/* Auth Page Specific Styles */
+.auth-page-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+  background-color: var(--background);
+}
+
+.auth-card-wrapper {
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* Brand Header */
+.brand-header {
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.brand-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--frost-mist);
+  border: 1px solid var(--border);
+  color: var(--deep-winter-blue);
+  padding: 4px 12px;
+  border-radius: var(--radius);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.brand-logo {
+  font-family: var(--font-heading);
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--foreground);
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.brand-logo-icon {
+  width: 36px;
+  height: 36px;
+  background: var(--deep-winter-blue);
+  color: var(--snow-white);
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+/* Alerts */
+.auth-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.auth-alert.error {
+  background-color: var(--error-bg);
+  border: 1px solid var(--error-border);
+  color: var(--error-text);
+}
+
+.auth-alert.success {
+  background-color: var(--success-bg);
+  border: 1px solid var(--success-border);
+  color: var(--success-text);
+}
+
+/* Role Segmented Switcher */
+.role-segmented-control {
+  display: flex;
+  background: var(--muted);
+  padding: 4px;
+  border-radius: var(--radius);
+  margin-bottom: 20px;
+  border: 1px solid var(--border);
+  gap: 4px;
+}
+
+.role-segment-btn {
+  flex: 1;
+  height: 38px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all var(--transition-fast);
+}
+
+.role-segment-btn.active {
+  background: var(--surface);
+  color: var(--foreground);
+  box-shadow: 0 1px 3px rgba(7, 22, 41, 0.08);
+}
+
+/* Patient Auth Mode Switcher */
+.auth-mode-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+
+.auth-mode-tab {
+  flex: 1;
+  height: 40px;
+  border: none;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-mode-tab.active {
+  color: var(--deep-winter-blue);
+  border-bottom-color: var(--deep-winter-blue);
+}
+
+/* Password Input Wrapper */
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-wrapper .form-input {
+  padding-right: 44px;
+  width: 100%;
+}
+
+.password-toggle-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--icy-steel);
+  display: flex;
+  align-items: center;
+}
+
+.password-toggle-btn:hover {
+  color: var(--deep-winter-blue);
+}
+
+/* Staff Subrole Pills */
+.staff-subrole-selector {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.subrole-pill {
+  flex: 1;
+  height: 40px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all var(--transition-fast);
+}
+
+.subrole-pill.active {
+  border-color: var(--deep-winter-blue);
+  background: var(--frost-mist);
+  color: var(--deep-winter-blue);
+}
+
+/* Password Strength Indicator */
+.password-strength {
+  margin-top: 6px;
+}
+
+.strength-bar {
+  height: 3px;
+  border-radius: 2px;
+  background: var(--border);
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+.strength-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.3s ease, background 0.3s ease;
+}
+
+.strength-fill.weak { width: 33%; background: var(--error); }
+.strength-fill.fair { width: 66%; background: var(--warning); }
+.strength-fill.strong { width: 100%; background: var(--success); }
+
+.strength-label {
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.strength-label.weak { color: var(--error); }
+.strength-label.fair { color: var(--warning); }
+.strength-label.strong { color: var(--success); }
+
+/* Helper text */
+.field-helper {
+  font-size: 11px;
+  color: var(--muted-foreground);
+  margin-top: 4px;
+  display: block;
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #FFFFFF;
+  animation: spin 0.7s linear infinite;
+}
+
+.auth-footer {
+  margin-top: 24px;
+  font-size: 12px;
+  color: var(--muted-foreground);
+  line-height: 1.5;
+}

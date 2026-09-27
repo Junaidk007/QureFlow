@@ -1,0 +1,206 @@
+/* Reception Page Styling */
+.reception-page-layout {
+  min-height: 100vh;
+  background-color: var(--background);
+  display: flex;
+  flex-direction: column;
+}
+
+.reception-header {
+  height: 64px;
+  background-color: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.reception-content-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 28px 24px 80px;
+}
+
+/* KPI Strip */
+.stats-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 820px) {
+  .stats-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  box-shadow: var(--shadow-card);
+}
+
+.stat-card-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--muted-foreground);
+}
+
+.stat-card-value {
+  font-family: var(--font-heading);
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1.1;
+  margin: 6px 0 2px;
+}
+
+.stat-card-sub {
+  font-size: 11px;
+  color: var(--muted-foreground);
+}
+
+/* Toolbar */
+.table-toolbar-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.doctor-filter-tabs {
+  display: flex;
+  background: var(--muted);
+  padding: 4px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  gap: 4px;
+  overflow-x: auto;
+}
+
+.doc-filter-btn {
+  border: none;
+  background: transparent;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+}
+
+.doc-filter-btn.active {
+  background: var(--surface);
+  color: var(--foreground);
+  box-shadow: 0 1px 3px rgba(7, 22, 41, 0.08);
+}
+
+/* Table Container */
+.table-container-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.reception-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13px;
+}
+
+.reception-table th {
+  background: var(--surface-subtle);
+  padding: 12px 18px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--muted-foreground);
+  border-bottom: 1px solid var(--border);
+}
+
+.reception-table td {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.reception-table tr:hover {
+  background-color: var(--surface-subtle);
+}
+
+.urgent-row {
+  background-color: #FFFBEB !important;
+}
+
+.token-badge-pill {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 15px;
+  color: var(--deep-winter-blue);
+  background: var(--frost-mist);
+  padding: 4px 10px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+.urgent-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 800;
+  color: #B45309;
+  background: #FEF3C7;
+  padding: 2px 6px;
+  border-radius: var(--radius);
+}
+
+/* Action buttons */
+.btn-action {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--foreground);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-action:hover {
+  background: var(--frost-mist);
+  color: var(--deep-winter-blue);
+  border-color: var(--deep-winter-blue);
+}
+
+.btn-action.active {
+  background: #FEF3C7;
+  color: #B45309;
+  border-color: #F59E0B;
+}
+
+.btn-action.destructive:hover {
+  background: var(--error-bg);
+  color: var(--error-text);
+  border-color: var(--error-border);
+}
+
+/* Walk-in Modal */
+.walkin-modal {
+  max-width: 480px;
+  width: 100%;
+  padding: 28px;
+  background-color: var(--surface);
+}

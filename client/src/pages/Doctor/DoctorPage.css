@@ -1,0 +1,238 @@
+/* QureFlow — Screen 07: Doctor Consultation & Vitals Desk Styles */
+
+.doctor-page-container {
+  min-height: 100vh;
+  background-color: var(--color-background);
+  color: var(--color-accent-black);
+}
+
+/* App Header */
+.doctor-header {
+  background: var(--color-primary-surface);
+  border-bottom: 1px solid var(--color-border);
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+
+.doctor-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: var(--color-accent-black);
+}
+
+.doctor-logo-icon {
+  width: 32px;
+  height: 32px;
+  background: var(--deep-winter-blue);
+  color: var(--snow-white);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.doctor-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.doctor-badge-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #E8F5E9;
+  color: #166534;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.doctor-badge-status.on-break {
+  background: #FEF3C7;
+  color: #92400E;
+}
+
+/* Main Layout Grid */
+.doctor-layout {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 24px 20px 80px;
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 860px) {
+  .doctor-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Active Encounter Card */
+.encounter-card {
+  background: var(--color-primary-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(7, 22, 41, 0.05);
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.encounter-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--color-success);
+}
+
+.encounter-card.idle::before {
+  background: var(--icy-steel);
+}
+
+.encounter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.timer-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--frost-mist);
+  border: 1px solid var(--color-border);
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--deep-winter-blue);
+}
+
+.timer-badge.warning {
+  background: #FEF3C7;
+  border-color: #FCD34D;
+  color: #B45309;
+  animation: pulse-amber 2s infinite ease-in-out;
+}
+
+@keyframes pulse-amber {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+/* Quick Vitals Recording Grid */
+.vitals-card {
+  background: var(--color-primary-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(7, 22, 41, 0.05);
+  margin-bottom: 24px;
+}
+
+.vitals-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 600px) {
+  .vitals-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.vital-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.vital-unit-addon {
+  position: absolute;
+  right: 12px;
+  font-size: 12px;
+  color: var(--color-accent-muted);
+  font-weight: 600;
+  pointer-events: none;
+}
+
+/* Up-Next Drawer Card */
+.upnext-card {
+  background: var(--color-primary-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(7, 22, 41, 0.05);
+  position: sticky;
+  top: 80px;
+}
+
+.upnext-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  margin-bottom: 10px;
+  background: var(--color-primary-surface);
+  transition: all 0.15s ease;
+}
+
+.upnext-item:hover {
+  border-color: var(--deep-winter-blue);
+  background: var(--frost-mist);
+}
+
+.upnext-item.urgent {
+  background: #FFFBEB;
+  border-color: #FDE68A;
+}
+
+.token-chip {
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 700;
+  background: var(--deep-winter-blue);
+  color: var(--snow-white);
+  padding: 4px 8px;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.token-chip.urgent-chip {
+  background: #DC2626;
+}
+
+/* Empty State */
+.empty-doctor-view {
+  text-align: center;
+  padding: 64px 24px;
+  grid-column: 1 / -1;
+  background: var(--color-primary-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}

@@ -1,0 +1,217 @@
+/* Queue Page Styling */
+.queue-page-layout {
+  min-height: 100vh;
+  background-color: var(--background);
+  display: flex;
+  flex-direction: column;
+}
+
+.queue-header {
+  height: 64px;
+  background-color: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-clinic-meta {
+  font-size: 13px;
+}
+
+.live-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--frost-mist);
+  padding: 4px 12px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--deep-winter-blue);
+}
+
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.pulse-dot.online {
+  background-color: #10B981;
+  box-shadow: 0 0 6px #10B981;
+}
+
+.pulse-dot.offline {
+  background-color: #EF4444;
+}
+
+.queue-content-wrapper {
+  max-width: 640px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 28px 16px 80px;
+}
+
+/* Proximity Alert */
+.proximity-alert-banner {
+  background: var(--warning-bg);
+  border: 1px solid var(--warning-border);
+  color: var(--warning-text);
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+/* Token Hero Card */
+.token-hero-card {
+  padding: 28px 20px;
+  text-align: center;
+  margin-bottom: 20px;
+  border-top: 4px solid var(--deep-winter-blue);
+}
+
+.token-card-subtitle {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--muted-foreground);
+}
+
+.token-hero-number {
+  font-family: var(--font-heading);
+  font-size: 54px;
+  font-weight: 800;
+  color: var(--deep-winter-blue);
+  line-height: 1.1;
+  margin: 8px 0;
+}
+
+/* 3-Metrics Strip */
+.queue-metrics-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.metric-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 12px;
+  text-align: center;
+  box-shadow: var(--shadow-card);
+}
+
+.metric-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--muted-foreground);
+}
+
+.metric-value {
+  font-family: var(--font-heading);
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--foreground);
+  margin: 6px 0 2px;
+}
+
+.metric-sub {
+  font-size: 11px;
+  color: var(--muted-foreground);
+}
+
+/* 5-Step Stepper */
+.stepper-card {
+  padding: 20px;
+}
+
+.stepper-track {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  margin-top: 10px;
+}
+
+.step-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  z-index: 1;
+  flex: 1;
+}
+
+.step-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: var(--surface);
+  color: var(--muted-foreground);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  transition: all var(--transition-fast);
+}
+
+.step-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  text-align: center;
+}
+
+.step-node.past .step-circle {
+  background: var(--success-bg);
+  border-color: var(--success);
+  color: var(--success-text);
+}
+
+.step-node.current .step-circle {
+  background: var(--deep-winter-blue);
+  border-color: var(--deep-winter-blue);
+  color: var(--snow-white);
+  box-shadow: 0 0 0 4px rgba(23, 52, 92, 0.15);
+}
+
+.step-node.current .step-label {
+  color: var(--deep-winter-blue);
+  font-weight: 700;
+}
+
+/* Turn Calling Modal */
+.turn-call-modal {
+  max-width: 480px;
+  width: 100%;
+  text-align: center;
+  padding: 36px 24px;
+  background-color: var(--surface);
+}
+
+.turn-pulse-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--deep-winter-blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  box-shadow: 0 0 0 10px rgba(23, 52, 92, 0.15);
+  animation: turnPulse 1.5s infinite;
+}
+
+@keyframes turnPulse {
+  0% { transform: scale(0.96); box-shadow: 0 0 0 0 rgba(23, 52, 92, 0.4); }
+  70% { transform: scale(1); box-shadow: 0 0 0 16px rgba(23, 52, 92, 0); }
+  100% { transform: scale(0.96); box-shadow: 0 0 0 0 rgba(23, 52, 92, 0); }
+}
