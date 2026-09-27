@@ -1,346 +1,487 @@
 /**
- * QureFlow Design System — Screen 1: Auth & Role Gateway Logic
- * Implements 4 UI States (Loading, Empty, Error, Success) and Multi-Role Switching.
+ * QureFlow — Screen 1: Authentication & Role Gateway
+ * JS Controller (Vanilla JS — prototype/design layer only)
+ *
+ * Tech Stack (Production): React + Context API + React Router
+ * Auth: email/username + password → JWT (NO OTP, NO phone, NO SMS)
+ * Validation: Mirrors Joi schema defined in backend AuthController
  */
 
-// State tracking
-let currentRole = 'patient'; // 'patient' | 'staff'
-let currentStep = 'phone';   // 'phone' | 'otp'
+// =====================================================
+// STATE
+// =====================================================
+let currentRole = 'patient';       // 'patient' | 'staff'
+let currentPatientMode = 'login';  // 'login' | 'register'
 let selectedStaffSubrole = 'DOCTOR';
-let countdownInterval = null;
-let currentScreenState = 'empty'; // 'empty' | 'loading' | 'error' | 'success'
+let isLoading = false;
 
-document.addEventListener('DOMContentLoaded', () => {
-  initOtpInputs();
-});
-
-/* ==========================================================================
-   Role Switching
-   ========================================================================== */
+// =====================================================
+// ROLE SWITCHER
+// =====================================================
 function switchRole(role) {
   currentRole = role;
 
-  // Update tabs
-  document.getElementById('tab-patient').classList.toggle('active', role === 'patient');
-  document.getElementById('tab-staff').classList.toggle('active', role === 'staff');
-  document.getElementById('tab-patient').setAttribute('aria-selected', role === 'patient');
-  document.getElementById('tab-staff').setAttribute('aria-selected', role === 'staff');
+  const patientPanel = document.getElementById('patient-panel');
+  const staffForm = document.getElementById('staff-form');
+  const tabPatient = document.getElementById('tab-patient');
+  const tabStaff = document.getElementById('tab-staff');
+  const roleSubtitle = document.getElementById('role-subtitle');
+  const rolePatientBtn = document.getElementById('role-patient-btn');
+  const roleStaffBtn = document.getElementById('role-staff-btn');
 
-  // Update top tester buttons
-  document.getElementById('role-patient-btn').classList.toggle('active', role === 'patient');
-  document.getElementById('role-staff-btn').classList.toggle('active', role === 'staff');
+  clearAlert();
 
-  // Switch form visibility
-  document.getElementById('patient-form').style.display = role === 'patient' ? 'block' : 'none';
-  document.getElementById('staff-form').style.display = role === 'staff' ? 'block' : 'none';
-
-  // Subtitle
-  const subtitle = document.getElementById('role-subtitle');
   if (role === 'patient') {
-    subtitle.textContent = 'Synchronized queue management for patients & clinics';
+    patientPanel.style.display = 'block';
+    staffForm.style.display = 'none';
+    tabPatient.classList.add('active');
+    tabPatient.setAttribute('aria-selected', 'true');
+    tabStaff.classList.remove('active');
+    tabStaff.setAttribute('aria-selected', 'false');
+    roleSubtitle.textContent = 'Sign in or create your patient account';
+    if (rolePatientBtn) rolePatientBtn.classList.add('active');
+    if (roleStaffBtn) roleStaffBtn.classList.remove('active');
   } else {
-    subtitle.textContent = 'Clinic provider & desk administration portal';
+    patientPanel.style.display = 'none';
+    staffForm.style.display = 'block';
+    tabPatient.classList.remove('active');
+    tabPatient.setAttribute('aria-selected', 'false');
+    tabStaff.classList.add('active');
+    tabStaff.setAttribute('aria-selected', 'true');
+    roleSubtitle.textContent = 'Clinic staff & doctor secure sign-in portal';
+    if (rolePatientBtn) rolePatientBtn.classList.remove('active');
+    if (roleStaffBtn) roleStaffBtn.classList.add('active');
+    updateStaffCTA();
   }
-
-  hideAlert();
-  resetStateToEmpty();
 }
 
-function selectStaffSubrole(subrole) {
-  selectedStaffSubrole = subrole;
-  document.getElementById('subrole-doctor').classList.toggle('active', subrole === 'DOCTOR');
-  document.getElementById('subrole-reception').classList.toggle('active', subrole === 'RECEPTIONIST');
-  
+// =====================================================
+// PATIENT MODE SWITCHER (Login ↔ Register)
+// =====================================================
+function switchPatientMode(mode) {
+  currentPatientMode = mode;
+
+  const loginForm = document.getElementById('patient-login-form');
+  const registerForm = document.getElementById('patient-register-form');
+  const loginTab = document.getElementById('mode-tab-login');
+  const registerTab = document.getElementById('mode-tab-register');
+  const loginModeBtn = document.getElementById('mode-login-btn');
+  const registerModeBtn = document.getElementById('mode-register-btn');
+
+  clearAlert();
+
+  if (mode === 'login') {
+    loginForm.style.display = 'block';
+    registerForm.style.display = 'none';
+    loginTab.classList.add('active');
+    loginTab.setAttribute('aria-selected', 'true');
+    registerTab.classList.remove('active');
+    registerTab.setAttribute('aria-selected', 'false');
+    if (loginModeBtn) loginModeBtn.classList.add('active');
+    if (registerModeBtn) registerModeBtn.classList.remove('active');
+  } else {
+    loginForm.style.display = 'none';
+    registerForm.style.display = 'block';
+    loginTab.classList.remove('active');
+    loginTab.setAttribute('aria-selected', 'false');
+    registerTab.classList.add('active');
+    registerTab.setAttribute('aria-selected', 'true');
+    if (loginModeBtn) loginModeBtn.classList.remove('active');
+    if (registerModeBtn) registerModeBtn.classList.add('active');
+  }
+}
+
+// =====================================================
+// STAFF SUBROLE SELECTOR
+// =====================================================
+function selectStaffSubrole(role) {
+  selectedStaffSubrole = role;
+  document.getElementById('subrole-doctor').classList.toggle('active', role === 'DOCTOR');
+  document.getElementById('subrole-reception').classList.toggle('active', role === 'RECEPTIONIST');
+  updateStaffCTA();
+}
+
+function updateStaffCTA() {
   const ctaText = document.getElementById('staff-cta-text');
-  ctaText.textContent = subrole === 'DOCTOR' ? 'Sign In to Doctor Console' : 'Sign In to Reception Desk';
-}
-
-/* ==========================================================================
-   Patient Flow: Phone & OTP Handlers
-   ========================================================================== */
-function onPhoneInput(input) {
-  // Strip non-numeric characters
-  input.value = input.value.replace(/\D/g, '');
-  const isValid = input.value.length === 10;
-  const cta = document.getElementById('patient-primary-cta');
-
-  if (currentStep === 'phone') {
-    cta.disabled = !isValid;
-    cta.style.opacity = isValid ? '1' : '0.5';
-  }
-
-  input.classList.remove('is-error');
-  hideAlert();
-}
-
-function editPhoneNumber() {
-  currentStep = 'phone';
-  document.getElementById('group-phone').style.display = 'block';
-  document.getElementById('otp-section').style.display = 'none';
-  const ctaText = document.getElementById('patient-cta-text');
-  ctaText.textContent = 'Get OTP & Continue';
-  document.getElementById('phone-input').focus();
-  clearInterval(countdownInterval);
-}
-
-function initOtpInputs() {
-  const otpFields = document.querySelectorAll('.otp-field');
-  
-  otpFields.forEach((field, index) => {
-    field.addEventListener('input', (e) => {
-      field.value = field.value.replace(/\D/g, '');
-      field.classList.remove('is-error');
-
-      if (field.value && index < otpFields.length - 1) {
-        otpFields[index + 1].focus();
-      }
-
-      checkOtpCompletion();
-    });
-
-    field.addEventListener('keydown', (e) => {
-      if (e.key === 'Backspace' && !field.value && index > 0) {
-        otpFields[index - 1].focus();
-      }
-    });
-
-    field.addEventListener('paste', (e) => {
-      e.preventDefault();
-      const pasteData = (e.clipboardData || window.clipboardData).getData('text').trim();
-      const digits = pasteData.replace(/\D/g, '').slice(0, 6);
-      
-      digits.split('').forEach((digit, i) => {
-        if (otpFields[i]) otpFields[i].value = digit;
-      });
-
-      if (digits.length > 0) {
-        const nextIndex = Math.min(digits.length, otpFields.length - 1);
-        otpFields[nextIndex].focus();
-      }
-
-      checkOtpCompletion();
-    });
-  });
-}
-
-function checkOtpCompletion() {
-  const otpFields = document.querySelectorAll('.otp-field');
-  const allFilled = Array.from(otpFields).every(f => f.value.length === 1);
-  const cta = document.getElementById('patient-primary-cta');
-
-  if (currentStep === 'otp') {
-    cta.disabled = !allFilled;
-    cta.style.opacity = allFilled ? '1' : '0.5';
+  if (ctaText) {
+    ctaText.textContent = selectedStaffSubrole === 'DOCTOR'
+      ? 'Sign In to Doctor Console'
+      : 'Sign In to Reception Desk';
   }
 }
 
-function startOtpCountdown() {
-  let timeLeft = 28;
-  const timerSec = document.getElementById('timer-sec');
-  const countdownText = document.getElementById('countdown-text');
-  const resendLink = document.getElementById('resend-link');
+// =====================================================
+// PASSWORD VISIBILITY TOGGLE
+// =====================================================
+function togglePasswordVisibility(inputId, btn) {
+  const input = document.getElementById(inputId);
+  const icon = btn.querySelector('i');
+  if (!input || !icon) return;
 
-  countdownText.style.display = 'inline';
-  resendLink.classList.add('disabled');
-  timerSec.textContent = timeLeft;
-
-  clearInterval(countdownInterval);
-  countdownInterval = setInterval(() => {
-    timeLeft--;
-    timerSec.textContent = timeLeft;
-    if (timeLeft <= 0) {
-      clearInterval(countdownInterval);
-      countdownText.style.display = 'none';
-      resendLink.classList.remove('disabled');
-    }
-  }, 1000);
+  if (input.type === 'password') {
+    input.type = 'text';
+    icon.className = 'fa-solid fa-eye-slash';
+    btn.setAttribute('aria-label', 'Hide password');
+  } else {
+    input.type = 'password';
+    icon.className = 'fa-solid fa-eye';
+    btn.setAttribute('aria-label', 'Show password');
+  }
 }
 
-function resendOtp() {
-  startOtpCountdown();
-  showAlert('success', 'New 6-digit verification code sent to +91 ' + document.getElementById('phone-input').value);
-}
+// =====================================================
+// PASSWORD STRENGTH INDICATOR
+// =====================================================
+function updatePasswordStrength(value) {
+  const indicator = document.getElementById('password-strength-indicator');
+  const fill = document.getElementById('strength-fill');
+  const label = document.getElementById('strength-label');
 
-/* ==========================================================================
-   Staff Flow Handlers
-   ========================================================================== */
-function onStaffInput() {
-  const staffId = document.getElementById('staff-id').value.trim();
-  const staffPass = document.getElementById('staff-pass').value.trim();
-  const cta = document.getElementById('staff-primary-cta');
+  if (!indicator || !fill || !label) return;
 
-  const isValid = staffId.length >= 3 && staffPass.length >= 4;
-  cta.disabled = !isValid;
-  cta.style.opacity = isValid ? '1' : '0.5';
-  
-  document.getElementById('staff-id').classList.remove('is-error');
-  document.getElementById('staff-pass').classList.remove('is-error');
-  hideAlert();
-}
-
-/* ==========================================================================
-   Form Submission Handling
-   ========================================================================== */
-function handlePatientSubmit(event) {
-  event.preventDefault();
-
-  if (currentStep === 'phone') {
-    // Transition to OTP step
-    currentStep = 'otp';
-    document.getElementById('group-phone').style.display = 'none';
-    document.getElementById('otp-section').style.display = 'block';
-    document.getElementById('patient-cta-text').textContent = 'Verify & Continue';
-    document.getElementById('patient-primary-cta').disabled = true;
-    document.getElementById('patient-primary-cta').style.opacity = '0.5';
-    startOtpCountdown();
-    document.querySelector('.otp-field[data-index="0"]').focus();
+  if (value.length === 0) {
+    indicator.classList.remove('visible');
     return;
   }
 
-  // Trigger loading state and mock verification
-  setScreenState('loading');
-  setTimeout(() => {
-    setScreenState('success');
-  }, 1200);
-}
+  indicator.classList.add('visible');
 
-function handleStaffSubmit(event) {
-  event.preventDefault();
-  setScreenState('loading');
-  setTimeout(() => {
-    setScreenState('success');
-  }, 1200);
-}
+  let score = 0;
+  if (value.length >= 8) score++;
+  if (/[A-Z]/.test(value)) score++;
+  if (/[0-9]/.test(value)) score++;
+  if (/[^A-Za-z0-9]/.test(value)) score++;
 
-/* ==========================================================================
-   4 UI States Simulator (Empty, Loading, Error, Success)
-   ========================================================================== */
-function setScreenState(state) {
-  currentScreenState = state;
+  fill.className = 'strength-fill';
+  label.className = 'strength-label';
 
-  // Update tester buttons
-  ['empty', 'loading', 'error', 'success'].forEach(s => {
-    document.getElementById(`state-${s}-btn`).classList.toggle('active', s === state);
-  });
-
-  const patientCta = document.getElementById('patient-primary-cta');
-  const staffCta = document.getElementById('staff-primary-cta');
-  const activeCta = currentRole === 'patient' ? patientCta : staffCta;
-  const ctaTextId = currentRole === 'patient' ? 'patient-cta-text' : 'staff-cta-text';
-
-  // 1. LOADING STATE
-  if (state === 'loading') {
-    activeCta.disabled = true;
-    activeCta.style.opacity = '0.85';
-    activeCta.innerHTML = '<div class="spinner"></div> <span>Verifying credentials...</span>';
-    setInputsDisabled(true);
-    hideAlert();
-  } 
-  // 2. EMPTY STATE
-  else if (state === 'empty') {
-    resetStateToEmpty();
+  if (score <= 1) {
+    fill.classList.add('weak');
+    label.classList.add('weak');
+    label.textContent = 'Weak — add uppercase, numbers, or symbols';
+  } else if (score <= 2) {
+    fill.classList.add('fair');
+    label.classList.add('fair');
+    label.textContent = 'Fair — getting stronger';
+  } else {
+    fill.classList.add('strong');
+    label.classList.add('strong');
+    label.textContent = 'Strong password';
   }
-  // 3. ERROR STATE
-  else if (state === 'error') {
-    setInputsDisabled(false);
-    restoreCtaText();
-    
-    if (currentRole === 'patient') {
-      if (currentStep === 'phone') {
-        const phone = document.getElementById('phone-input');
-        phone.classList.add('is-error');
-        phone.focus();
-        showAlert('error', '⚠️ Please enter a valid 10-digit mobile number.');
+}
+
+// =====================================================
+// INPUT VALIDATORS (mirrors Joi backend schema)
+// =====================================================
+function isValidEmail(v) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
+}
+
+function isValidUsername(v) {
+  return /^[a-zA-Z0-9_]{3,30}$/.test(v.trim());
+}
+
+function isValidIdentifier(v) {
+  v = v.trim();
+  return v.length >= 3; // accepts email or username
+}
+
+// =====================================================
+// PATIENT LOGIN — Input Watch
+// =====================================================
+function onLoginInput() {
+  const identifier = document.getElementById('login-identifier').value.trim();
+  const password = document.getElementById('login-password').value;
+  const cta = document.getElementById('patient-login-cta');
+  if (cta) cta.disabled = !(identifier.length >= 3 && password.length >= 1);
+}
+
+// =====================================================
+// PATIENT REGISTER — Input Watch
+// =====================================================
+function onRegisterInput() {
+  const name = document.getElementById('reg-name').value.trim();
+  const username = document.getElementById('reg-username').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const password = document.getElementById('reg-password').value;
+  const cta = document.getElementById('patient-register-cta');
+
+  const valid =
+    name.length >= 2 &&
+    isValidUsername(username) &&
+    isValidEmail(email) &&
+    password.length >= 8;
+
+  if (cta) cta.disabled = !valid;
+}
+
+// =====================================================
+// STAFF — Input Watch
+// =====================================================
+function onStaffInput() {
+  const email = document.getElementById('staff-email').value.trim();
+  const password = document.getElementById('staff-pass').value;
+  const cta = document.getElementById('staff-primary-cta');
+  if (cta) cta.disabled = !(isValidEmail(email) && password.length >= 1);
+}
+
+// =====================================================
+// PATIENT LOGIN — Submit Handler
+// =====================================================
+function handlePatientLogin(event) {
+  event.preventDefault();
+  if (isLoading) return;
+
+  clearAlert();
+  const identifier = document.getElementById('login-identifier').value.trim();
+  const password = document.getElementById('login-password').value;
+
+  // --- Client-side Joi mirror validation ---
+  if (!isValidIdentifier(identifier)) {
+    return showAlert('error', '<i class="fa-solid fa-triangle-exclamation"></i> Please enter a valid email address or username.');
+  }
+  if (password.length < 1) {
+    return showAlert('error', '<i class="fa-solid fa-triangle-exclamation"></i> Please enter your password.');
+  }
+
+  // --- Simulate API: POST /api/v1/auth/login ---
+  setLoading(true, 'patient-login-cta', 'patient-login-cta-text', 'Signing in...');
+
+  setTimeout(() => {
+    setLoading(false, 'patient-login-cta', 'patient-login-cta-text', 'Sign In');
+
+    // Simulate: setScreenState determines response
+    const state = getCurrentSimState();
+
+    if (state === 'error') {
+      showAlert('error', '<i class="fa-solid fa-circle-xmark"></i> Invalid email/username or password. Please try again.');
+    } else {
+      // Success: store simulated JWT and redirect
+      showAlert('success', '<i class="fa-solid fa-circle-check"></i> Signed in successfully! Redirecting to your dashboard…');
+      localStorage.setItem('qureflow_token', 'simulated-jwt-patient-token');
+      localStorage.setItem('qureflow_user', JSON.stringify({ role: 'PATIENT', name: 'Rahul Verma', identifier }));
+      setTimeout(() => { window.location.href = 'patient-home.html'; }, 1200);
+    }
+  }, 1400);
+}
+
+// =====================================================
+// PATIENT REGISTER — Submit Handler
+// =====================================================
+function handlePatientRegister(event) {
+  event.preventDefault();
+  if (isLoading) return;
+
+  clearAlert();
+  const name = document.getElementById('reg-name').value.trim();
+  const username = document.getElementById('reg-username').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const password = document.getElementById('reg-password').value;
+
+  // --- Client-side Joi mirror validation ---
+  if (name.length < 2) {
+    return showAlert('error', '<i class="fa-solid fa-triangle-exclamation"></i> Please enter your full name (at least 2 characters).');
+  }
+  if (!isValidUsername(username)) {
+    return showAlert('error', '<i class="fa-solid fa-triangle-exclamation"></i> Username must be 3–30 characters: letters, numbers, and underscores only.');
+  }
+  if (!isValidEmail(email)) {
+    return showAlert('error', '<i class="fa-solid fa-triangle-exclamation"></i> Please enter a valid email address.');
+  }
+  if (password.length < 8) {
+    return showAlert('error', '<i class="fa-solid fa-triangle-exclamation"></i> Password must be at least 8 characters.');
+  }
+
+  // --- Simulate API: POST /api/v1/auth/register ---
+  setLoading(true, 'patient-register-cta', 'patient-register-cta-text', 'Creating account…');
+
+  setTimeout(() => {
+    setLoading(false, 'patient-register-cta', 'patient-register-cta-text', 'Create Account');
+
+    const state = getCurrentSimState();
+
+    if (state === 'error') {
+      // Simulate 409 Conflict scenarios
+      const conflict = Math.random() > 0.5 ? 'email' : 'username';
+      if (conflict === 'email') {
+        showAlert('error', '<i class="fa-solid fa-circle-xmark"></i> An account with this email already exists. <a href="javascript:void(0)" onclick="switchPatientMode(\'login\')" style="font-weight:600; color:var(--deep-winter-blue);">Try signing in.</a>');
       } else {
-        document.querySelectorAll('.otp-field').forEach(f => f.classList.add('is-error'));
-        showAlert('error', '⚠️ Incorrect OTP code. 2 attempts remaining.');
+        showAlert('error', '<i class="fa-solid fa-circle-xmark"></i> This username is already taken. Please choose another.');
       }
     } else {
-      document.getElementById('staff-id').classList.add('is-error');
-      document.getElementById('staff-pass').classList.add('is-error');
-      showAlert('error', '⚠️ Invalid staff credentials or unassigned clinic.');
+      // Success: 201 Created — auto-login
+      showAlert('success', '<i class="fa-solid fa-circle-check"></i> Account created! Welcome to QureFlow. Redirecting…');
+      localStorage.setItem('qureflow_token', 'simulated-jwt-patient-token');
+      localStorage.setItem('qureflow_user', JSON.stringify({ role: 'PATIENT', name, username, email }));
+      setTimeout(() => { window.location.href = 'patient-home.html'; }, 1200);
     }
+  }, 1600);
+}
+
+// =====================================================
+// STAFF LOGIN — Submit Handler
+// =====================================================
+function handleStaffSubmit(event) {
+  event.preventDefault();
+  if (isLoading) return;
+
+  clearAlert();
+  const clinicId = document.getElementById('clinic-select').value;
+  const email = document.getElementById('staff-email').value.trim();
+  const password = document.getElementById('staff-pass').value;
+
+  // --- Validate ---
+  if (!isValidEmail(email)) {
+    return showAlert('error', '<i class="fa-solid fa-triangle-exclamation"></i> Please enter a valid staff email address.');
   }
-  // 4. SUCCESS STATE
-  else if (state === 'success') {
-    setInputsDisabled(false);
-    restoreCtaText();
-    
-    if (currentRole === 'patient') {
-      showAlert('success', '✓ Phone verified! Opening Patient Home Dashboard...');
-      setTimeout(() => { window.location.href = 'patient-home.html'; }, 1400);
+  if (password.length < 1) {
+    return showAlert('error', '<i class="fa-solid fa-triangle-exclamation"></i> Please enter your password.');
+  }
+
+  // --- Simulate API: POST /api/v1/auth/login ---
+  setLoading(true, 'staff-primary-cta', 'staff-cta-text',
+    selectedStaffSubrole === 'DOCTOR' ? 'Authenticating…' : 'Authenticating…');
+
+  setTimeout(() => {
+    const label = selectedStaffSubrole === 'DOCTOR' ? 'Sign In to Doctor Console' : 'Sign In to Reception Desk';
+    setLoading(false, 'staff-primary-cta', 'staff-cta-text', label);
+
+    const state = getCurrentSimState();
+
+    if (state === 'error') {
+      showAlert('error', '<i class="fa-solid fa-circle-xmark"></i> Invalid credentials or no staff record found for this clinic. Please check your details.');
     } else {
-      const deskName = selectedStaffSubrole === 'DOCTOR' ? 'Doctor Consultation Desk (Screen 6)' : 'Reception Triage Console (Screen 5)';
-      showAlert('success', `✓ Staff authenticated! Opening ${deskName}...`);
+      showAlert('success', '<i class="fa-solid fa-circle-check"></i> Staff verified. Redirecting to your console…');
+      localStorage.setItem('qureflow_token', 'simulated-jwt-staff-token');
+      localStorage.setItem('qureflow_user', JSON.stringify({ role: selectedStaffSubrole, email, clinicId }));
       setTimeout(() => {
-        window.location.href = selectedStaffSubrole === 'DOCTOR' ? '6-doctor.html' : '5-reception.html';
-      }, 1400);
+        if (selectedStaffSubrole === 'DOCTOR') {
+          window.location.href = '6-doctor.html';
+        } else {
+          window.location.href = '5-reception.html';
+        }
+      }, 1200);
     }
-  }
+  }, 1400);
 }
 
-function resetStateToEmpty() {
-  setInputsDisabled(false);
-  hideAlert();
-  
-  if (currentRole === 'patient') {
-    currentStep = 'phone';
-    document.getElementById('group-phone').style.display = 'block';
-    document.getElementById('otp-section').style.display = 'none';
-    const phoneInput = document.getElementById('phone-input');
-    phoneInput.value = '';
-    phoneInput.classList.remove('is-error');
-    
-    document.querySelectorAll('.otp-field').forEach(f => {
-      f.value = '';
-      f.classList.remove('is-error');
-    });
+// =====================================================
+// SCREEN STATE SIMULATOR (QA/UX tool bar)
+// =====================================================
+let _simState = 'empty';
 
-    const cta = document.getElementById('patient-primary-cta');
-    cta.disabled = true;
-    cta.style.opacity = '0.5';
-    document.getElementById('patient-cta-text').textContent = 'Get OTP & Continue';
-  } else {
-    document.getElementById('staff-id').value = '';
-    document.getElementById('staff-pass').value = '';
-    document.getElementById('staff-id').classList.remove('is-error');
-    document.getElementById('staff-pass').classList.remove('is-error');
-
-    const cta = document.getElementById('staff-primary-cta');
-    cta.disabled = true;
-    cta.style.opacity = '0.5';
-    restoreCtaText();
-  }
+function getCurrentSimState() {
+  return _simState;
 }
 
-function restoreCtaText() {
-  const patientCta = document.getElementById('patient-primary-cta');
-  const staffCta = document.getElementById('staff-primary-cta');
-
-  if (currentStep === 'phone') {
-    patientCta.innerHTML = '<span id="patient-cta-text">Get OTP & Continue</span>';
-  } else {
-    patientCta.innerHTML = '<span id="patient-cta-text">Verify & Continue</span>';
-  }
-
-  const staffText = selectedStaffSubrole === 'DOCTOR' ? 'Sign In to Doctor Console' : 'Sign In to Reception Desk';
-  staffCta.innerHTML = `<span id="staff-cta-text">${staffText}</span>`;
-}
-
-function setInputsDisabled(disabled) {
-  document.querySelectorAll('input, select').forEach(el => {
-    el.disabled = disabled;
+function setScreenState(state) {
+  _simState = state;
+  const states = ['empty', 'loading', 'error', 'success'];
+  states.forEach(s => {
+    const btn = document.getElementById(`state-${s}-btn`);
+    if (btn) btn.classList.toggle('active', s === state);
   });
+
+  clearAlert();
+
+  if (state === 'error') {
+    showAlert('error', '<i class="fa-solid fa-triangle-exclamation"></i> Simulation: Invalid email/username or password.');
+  } else if (state === 'success') {
+    showAlert('success', '<i class="fa-solid fa-circle-check"></i> Simulation: Authentication successful. Redirecting…');
+  }
 }
 
+// =====================================================
+// ALERT SYSTEM
+// =====================================================
 function showAlert(type, message) {
   const alertBox = document.getElementById('alert-box');
-  alertBox.className = type === 'error' ? 'alert alert-error' : 'alert alert-success';
-  alertBox.textContent = message;
-  alertBox.style.display = 'flex';
+  if (!alertBox) return;
+
+  const colorMap = {
+    error:   { bg: 'var(--color-error-bg)',   border: 'var(--color-error-border)',   text: '#B91C1C' },
+    success: { bg: 'var(--color-success-bg)', border: 'var(--color-success-border)', text: '#047857' },
+    warning: { bg: 'var(--color-warning-bg)', border: 'var(--color-warning-border)', text: '#B45309' },
+  };
+
+  const c = colorMap[type] || colorMap.error;
+  alertBox.style.display = 'block';
+  alertBox.style.cssText = `
+    display: block;
+    background: ${c.bg};
+    border: 1px solid ${c.border};
+    color: ${c.text};
+    border-radius: var(--radius-unified);
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    text-align: left;
+    margin-bottom: var(--space-4);
+    line-height: 1.5;
+  `;
+  alertBox.innerHTML = message;
 }
 
-function hideAlert() {
+function clearAlert() {
   const alertBox = document.getElementById('alert-box');
-  alertBox.style.display = 'none';
+  if (alertBox) {
+    alertBox.style.display = 'none';
+    alertBox.innerHTML = '';
+  }
 }
+
+// =====================================================
+// LOADING STATE
+// =====================================================
+function setLoading(loading, btnId, textId, text) {
+  isLoading = loading;
+  const btn = document.getElementById(btnId);
+  const textEl = document.getElementById(textId);
+  if (!btn) return;
+
+  btn.disabled = loading;
+  if (textEl) textEl.textContent = text;
+
+  // Add or remove spinner
+  const existingSpinner = btn.querySelector('.spinner');
+  if (loading && !existingSpinner) {
+    const spinner = document.createElement('div');
+    spinner.className = 'spinner';
+    btn.insertBefore(spinner, btn.firstChild);
+    // Remove icon temporarily
+    const icon = btn.querySelector('i.fa-solid');
+    if (icon) icon.style.display = 'none';
+  } else if (!loading && existingSpinner) {
+    existingSpinner.remove();
+    const icon = btn.querySelector('i.fa-solid');
+    if (icon) icon.style.display = '';
+  }
+}
+
+// =====================================================
+// INITIALIZE
+// =====================================================
+document.addEventListener('DOMContentLoaded', () => {
+  // Restore theme
+  if (localStorage.getItem('qureflow-theme') === 'dark') {
+    document.body.classList.add('dark-mode');
+    document.documentElement.setAttribute('data-theme', 'dark');
+    const btn = document.getElementById('theme-btn');
+    if (btn) btn.innerHTML = '<i class="fa-solid fa-sun"></i> <span>Light Mode</span>';
+  }
+
+  // If already logged in, redirect
+  const token = localStorage.getItem('qureflow_token');
+  const userData = localStorage.getItem('qureflow_user');
+  if (token && userData) {
+    try {
+      const user = JSON.parse(userData);
+      if (user.role === 'PATIENT') window.location.href = 'patient-home.html';
+      else if (user.role === 'DOCTOR') window.location.href = '6-doctor.html';
+      else if (user.role === 'RECEPTIONIST') window.location.href = '5-reception.html';
+    } catch(e) {
+      localStorage.removeItem('qureflow_token');
+      localStorage.removeItem('qureflow_user');
+    }
+  }
+});

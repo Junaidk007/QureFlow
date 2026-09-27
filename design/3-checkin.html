@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QureFlow — Screen 3: QR Arrival Check-In</title>
+  <title>QureFlow — Screen 4: QR Physical Arrival Check-In</title>
   <link rel="stylesheet" href="css/style.css">
   <style>
-    /* Screen 3 Layout */
+    /* Screen 4 Layout */
     .app-header {
       background: var(--color-primary-surface);
       border-bottom: 1px solid var(--color-border);
@@ -25,15 +25,15 @@
     }
 
     .header-logo-icon {
-      width: 28px;
-      height: 28px;
-      background: var(--color-accent-black);
-      color: #FFFFFF;
+      width: 32px;
+      height: 32px;
+      background: var(--deep-winter-blue);
+      color: var(--snow-white);
       border-radius: var(--radius-unified);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 700;
     }
 
@@ -46,7 +46,7 @@
 
     /* Appointment Info Banner Card */
     .appt-card {
-      background: #FFFFFF;
+      background: var(--color-primary-surface);
       border: 1px solid var(--color-border);
       border-radius: var(--radius-unified);
       padding: var(--space-4);
@@ -74,7 +74,7 @@
       position: relative;
       width: 100%;
       height: 280px;
-      background: #0F172A;
+      background: var(--frost-navy);
       border-radius: var(--radius-unified);
       overflow: hidden;
       display: flex;
@@ -82,13 +82,14 @@
       justify-content: center;
       margin-bottom: var(--space-4);
       box-shadow: var(--shadow-elevated);
+      border: 1px solid var(--color-border);
     }
 
     .scanner-reticle {
       position: relative;
       width: 200px;
       height: 200px;
-      border: 2px dashed rgba(255, 255, 255, 0.4);
+      border: 2px dashed rgba(157, 183, 213, 0.4);
       border-radius: var(--radius-unified);
       display: flex;
       align-items: center;
@@ -98,9 +99,9 @@
     /* Target Corner Accents */
     .reticle-corner {
       position: absolute;
-      width: 16px;
-      height: 16px;
-      border-color: var(--color-secondary-blue);
+      width: 18px;
+      height: 18px;
+      border-color: var(--icy-steel);
       border-style: solid;
     }
     .corner-tl { top: -2px; left: -2px; border-width: 3px 0 0 3px; }
@@ -114,8 +115,8 @@
       left: 0;
       right: 0;
       height: 2px;
-      background: linear-gradient(90deg, transparent, #3B82F6, #60A5FA, transparent);
-      box-shadow: 0 0 8px #3B82F6;
+      background: linear-gradient(90deg, transparent, #9DB7D5, #FFFFFF, transparent);
+      box-shadow: 0 0 8px #9DB7D5;
       animation: scanAnim 2.2s ease-in-out infinite;
     }
 
@@ -127,20 +128,21 @@
     .scanner-instruction {
       position: absolute;
       bottom: 12px;
-      color: rgba(255, 255, 255, 0.8);
+      color: var(--snow-white);
       font-size: 12px;
       font-weight: 500;
-      background: rgba(15, 23, 42, 0.7);
-      padding: 4px 12px;
+      background: rgba(7, 22, 41, 0.8);
+      padding: 4px 14px;
       border-radius: var(--radius-unified);
       backdrop-filter: blur(4px);
+      border: 1px solid rgba(157, 183, 213, 0.2);
     }
 
-    /* Manual Code Entry Accordion/Toggle */
+    /* Manual Code Entry */
     .manual-toggle-btn {
       background: transparent;
       border: none;
-      color: var(--color-secondary-blue);
+      color: var(--deep-winter-blue);
       font-size: 13px;
       font-weight: 600;
       cursor: pointer;
@@ -155,7 +157,7 @@
     }
 
     .manual-code-box {
-      background: #FFFFFF;
+      background: var(--color-primary-surface);
       border: 1px solid var(--color-border);
       border-radius: var(--radius-unified);
       padding: var(--space-4);
@@ -164,11 +166,11 @@
       text-align: left;
     }
 
-    /* Full-Screen / Modal Success Token Pass */
+    /* Token Pass Modal */
     .token-modal {
       position: fixed;
       inset: 0;
-      background: rgba(15, 23, 42, 0.7);
+      background: rgba(7, 22, 41, 0.7);
       backdrop-filter: blur(6px);
       z-index: 2000;
       display: flex;
@@ -178,13 +180,14 @@
     }
 
     .token-card {
-      background: #FFFFFF;
+      background: var(--color-primary-surface);
       border-radius: var(--radius-unified);
+      border: 1px solid var(--color-border);
       max-width: 440px;
       width: 100%;
       padding: var(--space-6);
       text-align: center;
-      box-shadow: var(--shadow-elevated);
+      box-shadow: var(--shadow-modal);
       animation: tokenPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
@@ -193,18 +196,32 @@
       100% { transform: scale(1); opacity: 1; }
     }
 
+    /* Token Hero Badge: High contrast Deep Winter Blue with Snow White text */
     .token-badge-hero {
       display: inline-block;
-      background: var(--color-accent-black);
-      color: #FFFFFF;
+      background: var(--deep-winter-blue);
+      color: var(--snow-white);
       padding: 8px 24px;
       border-radius: var(--radius-unified);
       font-family: var(--font-heading);
       font-size: 40px;
-      font-weight: 700;
+      font-weight: 800;
       letter-spacing: -0.02em;
       margin: 16px 0 12px;
-      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+      box-shadow: 0 4px 12px rgba(7, 22, 41, 0.15);
+    }
+
+    .user-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--frost-mist);
+      padding: 6px 12px;
+      border-radius: var(--radius-unified);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--deep-winter-blue);
+      border: 1px solid var(--color-border);
     }
   </style>
 </head>
@@ -214,13 +231,13 @@
   <aside class="state-controller-bar" aria-label="Interactive State Controller">
     <div class="title">
       <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#10B981;"></span>
-      <strong>Screen 3: QR Arrival Check-In</strong>
+      <strong>Screen 4: QR Physical Arrival Check-In</strong>
       <span class="badge badge-blue">Patient Tier</span>
     </div>
 
     <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
       <div class="pill-group" title="Switch UI Simulation States">
-        <span style="font-size: 11px; color: #94A3B8; padding-left: 6px;">STATE:</span>
+        <span style="font-size: 11px; color: var(--icy-steel); padding-left: 6px;">STATE:</span>
         <button class="state-btn active" id="state-normal-btn" onclick="setCheckinState('normal')">Interactive Scan</button>
         <button class="state-btn" id="state-loading-btn" onclick="setCheckinState('loading')">Validating</button>
         <button class="state-btn" id="state-empty-btn" onclick="setCheckinState('empty')">Empty (No Appt)</button>
@@ -228,21 +245,25 @@
         <button class="state-btn" id="state-success-btn" onclick="setCheckinState('success')">Success (Token)</button>
       </div>
 
+      <button class="theme-toggle-btn" id="theme-btn" onclick="toggleTheme()" title="Flip Color Ratio for Dark Mode">
+        <i class="fa-solid fa-moon"></i> <span>Dark Mode</span>
+      </button>
+
       <div class="pill-group">
-        <a href="2-booking.html" class="state-btn" style="text-decoration:none;">← Screen 2</a>
-        <a href="4-queue.html" class="state-btn" style="text-decoration:none;">Screen 4 →</a>
+        <a href="2-booking.html" class="state-btn" style="text-decoration:none;"><i class="fa-solid fa-arrow-left"></i> Screen 3</a>
+        <a href="4-queue.html" class="state-btn" style="text-decoration:none;">Screen 5 <i class="fa-solid fa-arrow-right"></i></a>
       </div>
     </div>
   </aside>
 
   <!-- App Header -->
   <header class="app-header">
-    <a href="2-booking.html" class="header-brand">
+    <a href="patient-home.html" class="header-brand">
       <div class="header-logo-icon">Q</div>
       <strong style="font-family: var(--font-heading); font-size: 18px;">QureFlow</strong>
     </a>
     <div class="user-pill">
-      <span>📍 Apollo Main OPD — Entrance Desk</span>
+      <i class="fa-solid fa-location-dot"></i> <span>Apollo Main OPD — Entrance Standee</span>
     </div>
   </header>
 
@@ -253,18 +274,18 @@
     <div class="appt-card" id="appt-card">
       <div class="appt-header">
         <span class="text-small" style="color:var(--color-accent-muted);">TODAY'S APPOINTMENT (#BK-9042)</span>
-        <span class="badge badge-green" id="window-status-pill">● Check-In Open (±15m)</span>
+        <span class="badge badge-green" id="window-status-pill"><i class="fa-solid fa-circle-check"></i> Check-In Window Open (±15m)</span>
       </div>
 
       <h2 style="font-size: 17px; margin-bottom: 6px;">Dr. Rajesh Sharma</h2>
       <div class="appt-details-grid">
         <div>
-          <span style="color:var(--color-accent-muted);">Scheduled Slot:</span><br>
-          <strong id="appt-time">Today • 11:00 AM</strong>
+          <span style="color:var(--color-accent-muted);"><i class="fa-regular fa-clock"></i> Scheduled Slot:</span><br>
+          <strong id="appt-time">Today • 10:30 AM</strong>
         </div>
         <div>
-          <span style="color:var(--color-accent-muted);">Arrival Window:</span><br>
-          <strong id="appt-window">10:45 AM – 11:15 AM</strong>
+          <span style="color:var(--color-accent-muted);"><i class="fa-solid fa-door-open"></i> Arrival Window:</span><br>
+          <strong id="appt-window">10:15 AM – 10:45 AM</strong>
         </div>
       </div>
     </div>
@@ -272,7 +293,7 @@
     <!-- Error Alert Box -->
     <div id="checkin-alert" style="display:none; margin-bottom: var(--space-4);">
       <div class="alert alert-error" id="checkin-alert-text">
-        ⚠️ Check-in Rejected: You are outside the permitted 15-minute arrival window. Please contact reception.
+        <i class="fa-solid fa-triangle-exclamation"></i> Check-in Rejected: You are outside the permitted 15-minute arrival window. Please approach reception.
       </div>
     </div>
 
@@ -286,15 +307,16 @@
           <div class="reticle-corner corner-bl"></div>
           <div class="reticle-corner corner-br"></div>
           <div class="scanner-beam"></div>
-          <span style="font-size: 48px; opacity: 0.35;">📷</span>
+          <i class="fa-solid fa-qrcode" style="font-size: 48px; color: var(--icy-steel); opacity: 0.4;"></i>
         </div>
         <div class="scanner-instruction" id="scanner-instruction">
-          Align clinic reception QR code within the frame
+          Align clinic entrance QR code within the frame
         </div>
       </div>
 
       <!-- THE ONE PRIMARY ACTION (CTA) -->
       <button id="primary-scan-cta" class="btn btn-primary btn-block" style="margin-bottom: var(--space-3);" onclick="simulateQrScan()">
+        <i class="fa-solid fa-qrcode"></i>
         <span id="scan-cta-text">Scan Clinic QR Code</span>
       </button>
     </div>
@@ -302,7 +324,7 @@
     <!-- Fallback Manual Entry -->
     <div>
       <button class="manual-toggle-btn" onclick="toggleManualCode()">
-        <span>⌨️</span> Can't scan QR? Enter 6-digit clinic code
+        <i class="fa-solid fa-keyboard"></i> Can't scan QR? Enter 6-digit clinic code
       </button>
 
       <div class="manual-code-box" id="manual-code-box">
@@ -316,23 +338,25 @@
 
     <!-- ZERO / EMPTY STATE (Hidden by default) -->
     <div id="empty-appt-state" class="card" style="display:none; text-align:center; padding: 48px 24px;">
-      <div style="font-size: 40px; margin-bottom: 12px;">🏥</div>
+      <div style="font-size: 40px; margin-bottom: 12px; color:var(--deep-winter-blue);">
+        <i class="fa-solid fa-hospital-user"></i>
+      </div>
       <h3 style="font-size: 18px; margin-bottom: 6px;">No Active Booking Found Today</h3>
       <p class="body-text" style="max-width: 360px; margin: 0 auto 20px;">
         You don't have a booked slot for today at this clinic. You can book an appointment or approach reception for walk-in registration.
       </p>
       <a href="2-booking.html" class="btn btn-primary" style="text-decoration:none;">
-        Book an Appointment (Screen 2)
+        <i class="fa-solid fa-calendar-plus"></i> Book an Appointment (Screen 3)
       </a>
     </div>
 
   </main>
 
-  <!-- SUCCESS TOKEN MODAL (Screen 3 Success State) -->
+  <!-- SUCCESS TOKEN MODAL (Screen 4 Success State) -->
   <div class="token-modal" id="token-success-modal" style="display: none;">
     <div class="token-card">
       <div class="badge badge-green" style="margin-bottom: 8px;">
-        ✓ Arrival Verified at Reception
+        <i class="fa-solid fa-circle-check"></i> Physical Arrival Verified
       </div>
       <h2 style="font-size: 20px;">Your Live Queue Token</h2>
       <p class="body-text" style="font-size: 13px;">
@@ -340,26 +364,26 @@
       </p>
 
       <!-- The Token ID Hero -->
-      <div class="token-badge-hero" id="minted-token">#A-14</div>
+      <div class="token-badge-hero" id="minted-token">#A-17</div>
 
-      <div style="background: #F8FAFC; border: 1px solid var(--color-border); border-radius: var(--radius-unified); padding: 12px; font-size: 13px; text-align: left; margin-bottom: 20px;">
+      <div style="background: var(--frost-mist); border: 1px solid var(--color-border); border-radius: var(--radius-unified); padding: 12px; font-size: 13px; text-align: left; margin-bottom: 20px;">
         <div style="display:flex; justify-content:space-between; margin-bottom: 4px;">
           <span style="color:var(--color-accent-muted);">Queue Position:</span>
-          <strong>4th in line</strong>
+          <strong>3rd in line</strong>
         </div>
         <div style="display:flex; justify-content:space-between; margin-bottom: 4px;">
           <span style="color:var(--color-accent-muted);">Estimated Wait:</span>
-          <strong style="color:var(--color-secondary-blue);">25 – 35 mins</strong>
+          <strong style="color:var(--deep-winter-blue);">20 – 30 mins</strong>
         </div>
         <div style="display:flex; justify-content:space-between;">
-          <span style="color:var(--color-accent-muted);">Room:</span>
-          <strong>Room 102 (OPD Ground Floor)</strong>
+          <span style="color:var(--color-accent-muted);">Cabin:</span>
+          <strong>Cabin 02 (Main OPD)</strong>
         </div>
       </div>
 
-      <!-- PROGRESSION PRIMARY CTA TO SCREEN 4 -->
+      <!-- PROGRESSION PRIMARY CTA TO SCREEN 5 -->
       <a href="4-queue.html" class="btn btn-primary btn-block" style="text-decoration:none; margin-bottom: 8px;">
-        Track Live Queue (Screen 4) →
+        <i class="fa-solid fa-users-line"></i> Track Live Queue (Screen 5) →
       </a>
       <button class="btn btn-ghost btn-block" onclick="closeTokenModal()">
         Stay on Check-In Screen
@@ -368,5 +392,26 @@
   </div>
 
   <script src="js/3-checkin.js"></script>
+  <script>
+    function toggleTheme() {
+      const isDark = document.body.classList.toggle('dark-mode');
+      if (isDark) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('qureflow-theme', 'dark');
+        document.getElementById('theme-btn').innerHTML = '<i class="fa-solid fa-sun"></i> <span>Light Mode</span>';
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+        localStorage.setItem('qureflow-theme', 'light');
+        document.getElementById('theme-btn').innerHTML = '<i class="fa-solid fa-moon"></i> <span>Dark Mode</span>';
+      }
+    }
+
+    if (localStorage.getItem('qureflow-theme') === 'dark') {
+      document.body.classList.add('dark-mode');
+      document.documentElement.setAttribute('data-theme', 'dark');
+      const btn = document.getElementById('theme-btn');
+      if (btn) btn.innerHTML = '<i class="fa-solid fa-sun"></i> <span>Light Mode</span>';
+    }
+  </script>
 </body>
 </html>

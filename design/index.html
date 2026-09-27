@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="css/style.css">
   <style>
     .hub-layout {
-      max-width: 1040px;
+      max-width: 1080px;
       margin: 0 auto;
       padding: var(--space-8) var(--space-6) 100px;
     }
@@ -15,16 +15,17 @@
     .hub-header {
       margin-bottom: var(--space-8);
       text-align: center;
+      position: relative;
     }
 
     .hub-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: var(--space-6);
     }
 
     .hub-screen-card {
-      background: #FFFFFF;
+      background: var(--color-primary-surface);
       border: 1px solid var(--color-border);
       border-radius: var(--radius-unified);
       padding: var(--space-6);
@@ -32,7 +33,7 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
       text-decoration: none;
       color: inherit;
     }
@@ -40,7 +41,7 @@
     .hub-screen-card:hover {
       transform: translateY(-3px);
       box-shadow: var(--shadow-elevated);
-      border-color: var(--color-secondary-blue);
+      border-color: var(--deep-winter-blue);
     }
 
     .card-top {
@@ -50,10 +51,17 @@
     .screen-number {
       font-size: 11px;
       font-weight: 700;
-      color: var(--color-secondary-blue);
+      color: var(--deep-winter-blue);
       text-transform: uppercase;
       letter-spacing: 0.05em;
       margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    [data-theme="dark"] .screen-number {
+      color: var(--icy-steel);
     }
 
     .screen-title {
@@ -78,56 +86,70 @@
       align-items: center;
       font-size: 12px;
     }
+
+    .theme-bar-top {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: var(--space-4);
+    }
   </style>
 </head>
 <body>
 
   <main class="hub-layout">
+
+    <div class="theme-bar-top">
+      <button class="theme-toggle-btn" id="theme-btn" onclick="toggleTheme()" title="Flip Color Ratio for Dark Mode">
+        <i class="fa-solid fa-moon"></i> <span>Dark Mode</span>
+      </button>
+    </div>
     
     <header class="hub-header">
-      <div class="badge badge-blue" style="margin-bottom:12px;">QureFlow MVP Design Architecture</div>
+      <div class="badge badge-blue" style="margin-bottom:12px;">
+        <i class="fa-solid fa-snowflake"></i> QureFlow Winter Arctic Frost Architecture
+      </div>
       <h1 style="font-size:36px; margin-bottom:10px;">Screen Gallery & Prototype Hub</h1>
-      <p class="body-text" style="max-width: 600px; margin: 0 auto;">
-        Interactive implementation of all 6 MVP screens for QureFlow based on the UI/UX architecture and minimal design system guidelines.
+      <p class="body-text" style="max-width: 640px; margin: 0 auto;">
+        Interactive implementation of all 7 MVP screens for QureFlow based on the real-time queue engine, database schema, and Arctic Frost minimal design system.
       </p>
     </header>
 
     <div class="hub-grid">
 
-      <!-- Screen 1 -->
+      <!-- Screen 1: Auth Gateway -->
       <a href="1-auth.html" class="hub-screen-card">
         <div class="card-top">
-          <div class="screen-number">Screen 01</div>
+          <div class="screen-number"><i class="fa-solid fa-shield-halved"></i> Screen 01</div>
           <div class="screen-title">Authentication & Role Gateway</div>
           <p class="screen-desc">
             Unified OTP verification for patients and credentialed sign-in for clinic doctors and receptionists.
           </p>
         </div>
         <div class="card-meta">
-          <span class="badge" style="background:#F1F5F9; color:#475569;">Guest Tier</span>
-          <strong style="color:var(--color-secondary-blue);">Open Screen 1 →</strong>
+          <span class="badge" style="background:var(--frost-mist); color:var(--deep-winter-blue); border:1px solid var(--color-border);">Guest Tier</span>
+          <strong style="color:var(--deep-winter-blue);">Open Screen 1 <i class="fa-solid fa-arrow-right"></i></strong>
         </div>
       </a>
 
-      <!-- Patient Home Dashboard -->
-      <a href="patient-home.html" class="hub-screen-card" style="border-color: var(--color-secondary-blue);">
+      <!-- Screen 2: Patient Home Dashboard -->
+      <a href="patient-home.html" class="hub-screen-card" style="border-color: var(--deep-winter-blue);">
         <div class="card-top">
-          <div class="screen-number" style="color:var(--color-success);">Patient Hub</div>
+          <div class="screen-number" style="color:var(--color-success);"><i class="fa-solid fa-house-medical"></i> Screen 02 • Patient Hub</div>
           <div class="screen-title">Patient Home Dashboard</div>
           <p class="screen-desc">
-            Dynamic active context card (changes between in-queue token, upcoming booking, or empty), quick actions, and duty doctors.
+            Dynamic active context card (adapting between live in-queue token, upcoming booking, or idle), quick actions, and duty specialists.
           </p>
         </div>
         <div class="card-meta">
           <span class="badge badge-green">Patient Home</span>
-          <strong style="color:var(--color-secondary-blue);">Open Patient Home →</strong>
+          <strong style="color:var(--deep-winter-blue);">Open Screen 2 <i class="fa-solid fa-arrow-right"></i></strong>
         </div>
       </a>
 
-      <!-- Screen 2 -->
+      <!-- Screen 3: Slot Booking -->
       <a href="2-booking.html" class="hub-screen-card">
         <div class="card-top">
-          <div class="screen-number">Screen 02</div>
+          <div class="screen-number"><i class="fa-solid fa-calendar-plus"></i> Screen 03</div>
           <div class="screen-title">Doctor Discovery & Slot Booking</div>
           <p class="screen-desc">
             Physician profile, 7-day horizontal calendar carousel, session slot chips, and appointment reservation.
@@ -135,29 +157,29 @@
         </div>
         <div class="card-meta">
           <span class="badge badge-blue">Patient User</span>
-          <strong style="color:var(--color-secondary-blue);">Open Screen 2 →</strong>
+          <strong style="color:var(--deep-winter-blue);">Open Screen 3 <i class="fa-solid fa-arrow-right"></i></strong>
         </div>
       </a>
 
-      <!-- Screen 3 -->
+      <!-- Screen 4: QR Check-in -->
       <a href="3-checkin.html" class="hub-screen-card">
         <div class="card-top">
-          <div class="screen-number">Screen 03</div>
+          <div class="screen-number"><i class="fa-solid fa-qrcode"></i> Screen 04</div>
           <div class="screen-title">QR Arrival Check-In & Token Pass</div>
           <p class="screen-desc">
-            Validates physical arrival at clinic within the ±15 min window using camera QR scan to mint active queue token.
+            Validates physical arrival within the ±15 min window using camera QR scan to mint active live queue token.
           </p>
         </div>
         <div class="card-meta">
           <span class="badge badge-blue">Patient User</span>
-          <strong style="color:var(--color-secondary-blue);">Open Screen 3 →</strong>
+          <strong style="color:var(--deep-winter-blue);">Open Screen 4 <i class="fa-solid fa-arrow-right"></i></strong>
         </div>
       </a>
 
-      <!-- Screen 4 -->
+      <!-- Screen 5: Live Queue Tracker -->
       <a href="4-queue.html" class="hub-screen-card">
         <div class="card-top">
-          <div class="screen-number">Screen 04</div>
+          <div class="screen-number"><i class="fa-solid fa-users-line"></i> Screen 05</div>
           <div class="screen-title">Patient Live Queue & ETA Tracker</div>
           <p class="screen-desc">
             Real-time live queue position, dynamic elastic wait range (ETA), consult lifecycle stepper, and turn alert modal.
@@ -165,29 +187,29 @@
         </div>
         <div class="card-meta">
           <span class="badge badge-blue">Patient User</span>
-          <strong style="color:var(--color-secondary-blue);">Open Screen 4 →</strong>
+          <strong style="color:var(--deep-winter-blue);">Open Screen 5 <i class="fa-solid fa-arrow-right"></i></strong>
         </div>
       </a>
 
-      <!-- Screen 5 -->
+      <!-- Screen 6: Reception Console -->
       <a href="5-reception.html" class="hub-screen-card">
         <div class="card-top">
-          <div class="screen-number">Screen 05</div>
+          <div class="screen-number"><i class="fa-solid fa-hospital-user"></i> Screen 06</div>
           <div class="screen-title">Reception Queue & Triage Console</div>
           <p class="screen-desc">
             Live physical arrival table, walk-in patient generator, priority reordering, and no-show exception handling.
           </p>
         </div>
         <div class="card-meta">
-          <span class="badge badge-amber">Reception Staff</span>
-          <strong style="color:var(--color-secondary-blue);">Open Screen 5 →</strong>
+          <span class="badge badge-amber">Staff Tier</span>
+          <strong style="color:var(--deep-winter-blue);">Open Screen 6 <i class="fa-solid fa-arrow-right"></i></strong>
         </div>
       </a>
 
-      <!-- Screen 6 -->
+      <!-- Screen 7: Doctor Desk -->
       <a href="6-doctor.html" class="hub-screen-card">
         <div class="card-top">
-          <div class="screen-number">Screen 06</div>
+          <div class="screen-number"><i class="fa-solid fa-stethoscope"></i> Screen 07</div>
           <div class="screen-title">Doctor Consultation & Vitals Desk</div>
           <p class="screen-desc">
             Active patient encounter view, live timer, rapid vitals entry (BP, Sugar, Weight), up-next queue, and call-next trigger.
@@ -195,7 +217,7 @@
         </div>
         <div class="card-meta">
           <span class="badge badge-green">Doctor Provider</span>
-          <strong style="color:var(--color-secondary-blue);">Open Screen 6 →</strong>
+          <strong style="color:var(--deep-winter-blue);">Open Screen 7 <i class="fa-solid fa-arrow-right"></i></strong>
         </div>
       </a>
 
@@ -203,5 +225,26 @@
 
   </main>
 
+  <script>
+    function toggleTheme() {
+      const isDark = document.body.classList.toggle('dark-mode');
+      if (isDark) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('qureflow-theme', 'dark');
+        document.getElementById('theme-btn').innerHTML = '<i class="fa-solid fa-sun"></i> <span>Light Mode</span>';
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+        localStorage.setItem('qureflow-theme', 'light');
+        document.getElementById('theme-btn').innerHTML = '<i class="fa-solid fa-moon"></i> <span>Dark Mode</span>';
+      }
+    }
+
+    if (localStorage.getItem('qureflow-theme') === 'dark') {
+      document.body.classList.add('dark-mode');
+      document.documentElement.setAttribute('data-theme', 'dark');
+      const btn = document.getElementById('theme-btn');
+      if (btn) btn.innerHTML = '<i class="fa-solid fa-sun"></i> <span>Light Mode</span>';
+    }
+  </script>
 </body>
 </html>

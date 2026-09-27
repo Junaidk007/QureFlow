@@ -3,10 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QureFlow — Screen 1: Authentication & Role Gateway</title>
+  <meta name="description" content="QureFlow — Secure Authentication Gateway for Patients and Clinic Staff. Sign in or create your account.">
+  <title>QureFlow — Authentication & Role Gateway</title>
   <link rel="stylesheet" href="css/style.css">
   <style>
-    /* Screen 1 Specific Layout & Component Styles */
+    /* ==============================================
+       Screen 1: Authentication & Role Gateway Styles
+       ============================================== */
+
     .auth-container {
       min-height: calc(100vh - 54px);
       display: flex;
@@ -18,12 +22,12 @@
 
     .auth-wrapper {
       width: 100%;
-      max-width: 440px;
+      max-width: 460px;
       margin: 0 auto;
       text-align: center;
     }
 
-    /* Logo & Branding */
+    /* Brand Header */
     .brand-header {
       margin-bottom: var(--space-6);
       display: flex;
@@ -58,10 +62,10 @@
     }
 
     .brand-logo-icon {
-      width: 32px;
-      height: 32px;
-      background: var(--color-accent-black);
-      color: #FFFFFF;
+      width: 34px;
+      height: 34px;
+      background: var(--deep-winter-blue);
+      color: var(--snow-white);
       border-radius: var(--radius-unified);
       display: flex;
       align-items: center;
@@ -70,22 +74,123 @@
       font-weight: 700;
     }
 
-    /* Role Segmented Switcher */
+    /* Role Segmented Switcher (shadcn/ui tabs — top level) */
     .role-segmented-control {
       display: flex;
-      background: #F1F5F9;
+      background: var(--frost-mist);
       padding: 4px;
       border-radius: var(--radius-unified);
       margin-bottom: var(--space-6);
       border: 1px solid var(--color-border);
+      gap: 4px;
     }
 
     .role-segment-btn {
       flex: 1;
-      height: 36px;
+      height: 38px;
       border: none;
       background: transparent;
       border-radius: 6px;
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--color-accent-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.15s ease;
+    }
+
+    .role-segment-btn.active {
+      background: var(--color-primary-surface);
+      color: var(--color-accent-black);
+      box-shadow: 0 1px 2px rgba(7, 22, 41, 0.08);
+    }
+
+    /* Patient Auth Mode Switcher (Login vs Register — inner tabs) */
+    .auth-mode-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--color-border);
+      margin-bottom: var(--space-6);
+      gap: 0;
+    }
+
+    .auth-mode-tab {
+      flex: 1;
+      height: 40px;
+      border: none;
+      background: transparent;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-accent-muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+    }
+
+    .auth-mode-tab.active {
+      color: var(--deep-winter-blue);
+      border-bottom-color: var(--deep-winter-blue);
+    }
+
+    [data-theme="dark"] .auth-mode-tab.active {
+      color: var(--icy-steel);
+      border-bottom-color: var(--icy-steel);
+    }
+
+    /* Password Visibility Toggle */
+    .password-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .password-input-wrapper .form-input {
+      padding-right: 44px;
+      width: 100%;
+    }
+
+    .password-toggle-btn {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--icy-steel);
+      font-size: 14px;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      transition: color 0.15s ease;
+    }
+
+    .password-toggle-btn:hover {
+      color: var(--deep-winter-blue);
+    }
+
+    /* Staff Role Toggle Pills */
+    .staff-subrole-selector {
+      display: flex;
+      gap: var(--space-2);
+      margin-bottom: var(--space-4);
+    }
+
+    .subrole-pill {
+      flex: 1;
+      height: 40px;
+      border: 1px solid var(--color-border);
+      background: var(--color-primary-surface);
+      border-radius: var(--radius-unified);
       font-family: var(--font-body);
       font-size: 13px;
       font-weight: 600;
@@ -98,121 +203,55 @@
       transition: all 0.15s ease;
     }
 
-    .role-segment-btn.active {
-      background: #FFFFFF;
-      color: var(--color-accent-black);
-      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
-    }
-
-    /* Phone Input with Prefix Badge */
-    .phone-input-group {
-      display: flex;
-      align-items: center;
-    }
-
-    .phone-prefix {
-      height: 44px;
-      padding: 0 12px;
-      background: #F8FAFC;
-      border: 1px solid var(--color-border);
-      border-right: none;
-      border-radius: var(--radius-unified) 0 0 var(--radius-unified);
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--color-accent-muted);
-      display: flex;
-      align-items: center;
-      user-select: none;
-    }
-
-    .phone-input-group .form-input {
-      border-radius: 0 var(--radius-unified) var(--radius-unified) 0;
-    }
-
-    /* 6-Digit OTP Box Grid */
-    .otp-grid {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 8px;
-      margin: var(--space-4) 0;
-    }
-
-    .otp-field {
-      width: 100%;
-      height: 48px;
-      font-size: 20px;
-      font-weight: 700;
-      text-align: center;
-      background: var(--color-primary-surface);
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-unified);
-      color: var(--color-accent-black);
-      outline: none;
-      transition: border-color 0.15s ease, box-shadow 0.15s ease;
-    }
-
-    .otp-field:focus {
-      border-color: var(--color-secondary-blue);
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
-    }
-
-    .otp-field.is-error {
-      border-color: var(--color-error);
-      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
-    }
-
-    /* Timer & Resend Link */
-    .resend-container {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 13px;
-      color: var(--color-accent-muted);
-      margin-bottom: var(--space-4);
-    }
-
-    .resend-link {
-      color: var(--color-secondary-blue);
-      font-weight: 600;
-      text-decoration: none;
-      cursor: pointer;
-    }
-
-    .resend-link.disabled {
-      color: #94A3B8;
-      pointer-events: none;
-      cursor: not-allowed;
-    }
-
-    /* Staff Staff Pill Selector */
-    .staff-subrole-selector {
-      display: flex;
-      gap: var(--space-2);
-      margin-bottom: var(--space-4);
-    }
-
-    .subrole-pill {
-      flex: 1;
-      height: 38px;
-      border: 1px solid var(--color-border);
-      background: #FAFAFC;
-      border-radius: var(--radius-unified);
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--color-accent-muted);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      transition: all 0.15s ease;
-    }
-
     .subrole-pill.active {
-      border-color: var(--color-secondary-blue);
-      background: var(--color-secondary-light);
-      color: var(--color-secondary-blue);
+      border-color: var(--deep-winter-blue);
+      background: var(--frost-mist);
+      color: var(--deep-winter-blue);
     }
+
+    [data-theme="dark"] .subrole-pill.active {
+      background: var(--deep-winter-blue);
+      color: var(--snow-white);
+    }
+
+    /* Password strength indicator */
+    .password-strength {
+      margin-top: 6px;
+      display: none;
+    }
+
+    .password-strength.visible {
+      display: block;
+    }
+
+    .strength-bar {
+      height: 3px;
+      border-radius: 2px;
+      background: var(--color-border);
+      overflow: hidden;
+      margin-bottom: 4px;
+    }
+
+    .strength-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.3s ease, background 0.3s ease;
+      width: 0%;
+    }
+
+    .strength-fill.weak { width: 33%; background: var(--color-error); }
+    .strength-fill.fair { width: 66%; background: var(--color-warning); }
+    .strength-fill.strong { width: 100%; background: var(--color-success); }
+
+    .strength-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+
+    .strength-label.weak { color: var(--color-error); }
+    .strength-label.fair { color: var(--color-warning); }
+    .strength-label.strong { color: var(--color-success); }
 
     /* Subtle Spinner */
     .spinner {
@@ -228,17 +267,43 @@
       to { transform: rotate(360deg); }
     }
 
+    /* Divider */
+    .auth-divider {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      margin: var(--space-4) 0;
+      font-size: 12px;
+      color: var(--color-accent-muted);
+    }
+
+    .auth-divider::before,
+    .auth-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--color-border);
+    }
+
     /* Footer Privacy Microcopy */
     .auth-footer {
       margin-top: var(--space-6);
       font-size: 12px;
-      color: #94A3B8;
+      color: var(--color-accent-muted);
       line-height: 1.4;
     }
 
     .auth-footer a {
-      color: var(--color-accent-muted);
+      color: var(--deep-winter-blue);
       text-decoration: underline;
+    }
+
+    /* Form field helper text */
+    .field-helper {
+      font-size: 11px;
+      color: var(--color-accent-muted);
+      margin-top: 4px;
+      text-align: left;
     }
   </style>
 </head>
@@ -248,24 +313,35 @@
   <aside class="state-controller-bar" aria-label="Interactive State Controller">
     <div class="title">
       <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#10B981;"></span>
-      <strong>Screen 1: Authentication & Role Gateway</strong>
+      <strong>Screen 1: Authentication &amp; Role Gateway</strong>
       <span class="badge badge-blue">Guest Tier</span>
     </div>
 
     <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
       <div class="pill-group" title="Switch UI Simulation States">
-        <span style="font-size: 11px; color: #94A3B8; padding-left: 6px;">STATE:</span>
-        <button class="state-btn active" id="state-empty-btn" onclick="setScreenState('empty')">Empty (Initial)</button>
+        <span style="font-size: 11px; color: var(--icy-steel); padding-left: 6px;">STATE:</span>
+        <button class="state-btn active" id="state-empty-btn" onclick="setScreenState('empty')">Empty</button>
         <button class="state-btn" id="state-loading-btn" onclick="setScreenState('loading')">Loading</button>
         <button class="state-btn" id="state-error-btn" onclick="setScreenState('error')">Error</button>
         <button class="state-btn" id="state-success-btn" onclick="setScreenState('success')">Success</button>
       </div>
 
       <div class="pill-group">
-        <span style="font-size: 11px; color: #94A3B8; padding-left: 6px;">ROLE:</span>
+        <span style="font-size: 11px; color: var(--icy-steel); padding-left: 6px;">ROLE:</span>
         <button class="state-btn active" id="role-patient-btn" onclick="switchRole('patient')">Patient</button>
-        <button class="state-btn" id="role-staff-btn" onclick="switchRole('staff')">Clinic Staff</button>
+        <button class="state-btn" id="role-staff-btn" onclick="switchRole('staff')">Staff</button>
       </div>
+
+      <div class="pill-group">
+        <span style="font-size: 11px; color: var(--icy-steel); padding-left: 6px;">MODE:</span>
+        <button class="state-btn active" id="mode-login-btn" onclick="switchPatientMode('login')">Login</button>
+        <button class="state-btn" id="mode-register-btn" onclick="switchPatientMode('register')">Register</button>
+      </div>
+
+      <!-- Flipped Dark Mode Toggle -->
+      <button class="theme-toggle-btn" id="theme-btn" onclick="toggleTheme()" title="Flip Color Ratio for Dark Mode">
+        <i class="fa-solid fa-moon"></i> <span>Dark Mode</span>
+      </button>
     </div>
   </aside>
 
@@ -275,86 +351,188 @@
 
       <!-- Brand Identity -->
       <header class="brand-header">
-        <div class="brand-badge">⚡ Real-Time Clinic Flow</div>
+        <div class="brand-badge">
+          <i class="fa-solid fa-bolt" style="color: var(--deep-winter-blue);"></i> Real-Time Clinic Flow
+        </div>
         <div class="brand-logo">
           <div class="brand-logo-icon">Q</div>
           <span>QureFlow</span>
         </div>
-        <p class="body-text" id="role-subtitle">Synchronized queue management for patients & clinics</p>
+        <p class="body-text" id="role-subtitle">Synchronized queue management for patients &amp; clinics</p>
       </header>
 
-      <!-- Main Auth Card -->
+      <!-- Main Auth Card (shadcn/ui card) -->
       <section class="card" id="auth-card">
 
-        <!-- Role Segmented Control -->
-        <div class="role-segmented-control" role="tablist">
+        <!-- Top-Level Role Segmented Control (shadcn/ui tabs) -->
+        <div class="role-segmented-control" role="tablist" aria-label="Select user role">
           <button class="role-segment-btn active" id="tab-patient" role="tab" aria-selected="true" onclick="switchRole('patient')">
-            <span>👤</span> Patient (OTP)
+            <i class="fa-solid fa-user"></i> Patient
           </button>
           <button class="role-segment-btn" id="tab-staff" role="tab" aria-selected="false" onclick="switchRole('staff')">
-            <span>🩺</span> Clinic Staff
+            <i class="fa-solid fa-user-doctor"></i> Clinic Staff
           </button>
         </div>
 
         <!-- Dynamic Feedback Alert Container -->
         <div id="alert-box" style="display: none;"></div>
 
-        <!-- PATIENT AUTH FORM -->
-        <form id="patient-form" onsubmit="handlePatientSubmit(event)" novalidate>
-          
-          <!-- Step 1: Mobile Number Input -->
-          <div class="form-group" id="group-phone">
-            <label class="form-label" for="phone-input">Mobile Number</label>
-            <div class="phone-input-group">
-              <span class="phone-prefix">+91</span>
-              <input 
-                type="tel" 
-                id="phone-input" 
-                class="form-input" 
-                placeholder="Enter 10-digit mobile number" 
-                maxlength="10" 
-                autocomplete="tel" 
+        <!-- =========================================
+             PATIENT AUTH PANEL
+             ========================================= -->
+        <div id="patient-panel">
+
+          <!-- Patient Login / Register Sub-Tabs -->
+          <div class="auth-mode-tabs" role="tablist" aria-label="Login or Register">
+            <button class="auth-mode-tab active" id="mode-tab-login" role="tab" aria-selected="true" onclick="switchPatientMode('login')">
+              <i class="fa-solid fa-right-to-bracket"></i> Sign In
+            </button>
+            <button class="auth-mode-tab" id="mode-tab-register" role="tab" aria-selected="false" onclick="switchPatientMode('register')">
+              <i class="fa-solid fa-user-plus"></i> Create Account
+            </button>
+          </div>
+
+          <!-- PATIENT LOGIN FORM -->
+          <form id="patient-login-form" onsubmit="handlePatientLogin(event)" novalidate>
+            <div class="form-group">
+              <label class="form-label" for="login-identifier">
+                <i class="fa-solid fa-at"></i> Email or Username
+              </label>
+              <input
+                type="text"
+                id="login-identifier"
+                class="form-input"
+                placeholder="Enter your email or username"
+                autocomplete="username"
                 autofocus
-                oninput="onPhoneInput(this)"
+                oninput="onLoginInput()"
               />
             </div>
-          </div>
 
-          <!-- Step 2: 6-Digit OTP Container (Shown after phone entered or in demo) -->
-          <div id="otp-section" style="display: none; text-align: left;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <label class="form-label">Enter 6-Digit OTP Code</label>
-              <a href="javascript:void(0)" onclick="editPhoneNumber()" style="font-size: 12px; color: var(--color-secondary-blue); font-weight: 600;">Edit Number</a>
+            <div class="form-group">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <label class="form-label" for="login-password">
+                  <i class="fa-solid fa-lock"></i> Password
+                </label>
+                <a href="javascript:void(0)" style="font-size:12px; color:var(--deep-winter-blue); font-weight:600;">Forgot password?</a>
+              </div>
+              <div class="password-input-wrapper">
+                <input
+                  type="password"
+                  id="login-password"
+                  class="form-input"
+                  placeholder="Enter your password"
+                  autocomplete="current-password"
+                  oninput="onLoginInput()"
+                />
+                <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('login-password', this)" aria-label="Toggle password visibility">
+                  <i class="fa-solid fa-eye"></i>
+                </button>
+              </div>
             </div>
-            
-            <div class="otp-grid">
-              <input type="text" maxlength="1" class="otp-field" data-index="0" inputmode="numeric" />
-              <input type="text" maxlength="1" class="otp-field" data-index="1" inputmode="numeric" />
-              <input type="text" maxlength="1" class="otp-field" data-index="2" inputmode="numeric" />
-              <input type="text" maxlength="1" class="otp-field" data-index="3" inputmode="numeric" />
-              <input type="text" maxlength="1" class="otp-field" data-index="4" inputmode="numeric" />
-              <input type="text" maxlength="1" class="otp-field" data-index="5" inputmode="numeric" />
+
+            <button type="submit" id="patient-login-cta" class="btn btn-primary btn-block" disabled>
+              <i class="fa-solid fa-right-to-bracket"></i>
+              <span id="patient-login-cta-text">Sign In</span>
+            </button>
+          </form>
+
+          <!-- PATIENT REGISTER FORM -->
+          <form id="patient-register-form" onsubmit="handlePatientRegister(event)" style="display: none;" novalidate>
+            <div class="form-group">
+              <label class="form-label" for="reg-name">
+                <i class="fa-solid fa-user"></i> Full Name
+              </label>
+              <input
+                type="text"
+                id="reg-name"
+                class="form-input"
+                placeholder="e.g. Rahul Verma"
+                autocomplete="name"
+                oninput="onRegisterInput()"
+              />
             </div>
 
-            <div class="resend-container">
-              <span>Didn't receive code?</span>
-              <span id="countdown-text">Resend in <strong id="timer-sec">28</strong>s</span>
-              <a href="javascript:void(0)" id="resend-link" class="resend-link disabled" onclick="resendOtp()">Resend OTP</a>
+            <div class="form-group">
+              <label class="form-label" for="reg-username">
+                <i class="fa-solid fa-at"></i> Username
+              </label>
+              <input
+                type="text"
+                id="reg-username"
+                class="form-input"
+                placeholder="e.g. rahul_verma (letters, numbers, _)"
+                autocomplete="username"
+                oninput="onRegisterInput()"
+                pattern="[a-zA-Z0-9_]+"
+              />
+              <p class="field-helper">3–30 characters. Letters, numbers, and underscores only.</p>
             </div>
-          </div>
 
-          <!-- Single Primary Action (CTA) -->
-          <button type="submit" id="patient-primary-cta" class="btn btn-primary btn-block" disabled>
-            <span id="patient-cta-text">Get OTP & Continue</span>
-          </button>
-        </form>
+            <div class="form-group">
+              <label class="form-label" for="reg-email">
+                <i class="fa-solid fa-envelope"></i> Email Address
+              </label>
+              <input
+                type="email"
+                id="reg-email"
+                class="form-input"
+                placeholder="e.g. rahul@gmail.com"
+                autocomplete="email"
+                oninput="onRegisterInput()"
+              />
+            </div>
 
-        <!-- CLINIC STAFF AUTH FORM (Hidden by default) -->
+            <div class="form-group">
+              <label class="form-label" for="reg-password">
+                <i class="fa-solid fa-lock"></i> Password
+              </label>
+              <div class="password-input-wrapper">
+                <input
+                  type="password"
+                  id="reg-password"
+                  class="form-input"
+                  placeholder="Min. 8 characters"
+                  autocomplete="new-password"
+                  oninput="onRegisterInput(); updatePasswordStrength(this.value)"
+                />
+                <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('reg-password', this)" aria-label="Toggle password visibility">
+                  <i class="fa-solid fa-eye"></i>
+                </button>
+              </div>
+              <!-- Password Strength Indicator -->
+              <div class="password-strength" id="password-strength-indicator">
+                <div class="strength-bar">
+                  <div class="strength-fill" id="strength-fill"></div>
+                </div>
+                <span class="strength-label" id="strength-label"></span>
+              </div>
+            </div>
+
+            <button type="submit" id="patient-register-cta" class="btn btn-primary btn-block" disabled>
+              <i class="fa-solid fa-user-plus"></i>
+              <span id="patient-register-cta-text">Create Account</span>
+            </button>
+
+            <p style="font-size: 12px; color: var(--color-accent-muted); margin-top: var(--space-4); text-align: center;">
+              Already have an account?
+              <a href="javascript:void(0)" onclick="switchPatientMode('login')" style="color: var(--deep-winter-blue); font-weight: 600;">Sign In</a>
+            </p>
+          </form>
+
+        </div>
+        <!-- /patient-panel -->
+
+        <!-- =========================================
+             CLINIC STAFF AUTH FORM
+             ========================================= -->
         <form id="staff-form" onsubmit="handleStaffSubmit(event)" style="display: none;" novalidate>
-          
-          <!-- Clinic Select -->
+
+          <!-- Clinic Select (shadcn/ui select) -->
           <div class="form-group">
-            <label class="form-label" for="clinic-select">Select Clinic / Center</label>
+            <label class="form-label" for="clinic-select">
+              <i class="fa-solid fa-hospital"></i> Select Clinic / Center
+            </label>
             <select id="clinic-select" class="form-select">
               <option value="clinic-1">Apollo City Health Center — Main OPD</option>
               <option value="clinic-2">Fortis Care Clinic — Sector 4</option>
@@ -364,43 +542,54 @@
 
           <!-- Staff Role Toggle -->
           <div class="form-group">
-            <label class="form-label">Staff Role</label>
+            <label class="form-label">
+              <i class="fa-solid fa-id-badge"></i> Staff Role
+            </label>
             <div class="staff-subrole-selector">
               <button type="button" class="subrole-pill active" id="subrole-doctor" onclick="selectStaffSubrole('DOCTOR')">
-                🩺 Doctor Console
+                <i class="fa-solid fa-stethoscope"></i> Doctor Console
               </button>
               <button type="button" class="subrole-pill" id="subrole-reception" onclick="selectStaffSubrole('RECEPTIONIST')">
-                🖥️ Reception Desk
+                <i class="fa-solid fa-hospital-user"></i> Reception Desk
               </button>
             </div>
           </div>
 
-          <!-- Staff Email/Phone -->
+          <!-- Staff Email -->
           <div class="form-group">
-            <label class="form-label" for="staff-id">Staff ID or Mobile</label>
-            <input type="text" id="staff-id" class="form-input" placeholder="e.g. dr.sharma or 9876543210" oninput="onStaffInput()" />
+            <label class="form-label" for="staff-email">
+              <i class="fa-solid fa-envelope"></i> Staff Email
+            </label>
+            <input type="email" id="staff-email" class="form-input" placeholder="e.g. dr.sharma@apolloclinic.com" autocomplete="username" oninput="onStaffInput()" />
           </div>
 
           <!-- Password with toggle -->
           <div class="form-group">
             <div style="display:flex; justify-content:space-between; align-items:center;">
-              <label class="form-label" for="staff-pass">Password</label>
-              <a href="javascript:void(0)" style="font-size:12px; color:var(--color-secondary-blue); font-weight:600;">Forgot?</a>
+              <label class="form-label" for="staff-pass">
+                <i class="fa-solid fa-lock"></i> Password
+              </label>
+              <a href="javascript:void(0)" style="font-size:12px; color:var(--deep-winter-blue); font-weight:600;">Forgot?</a>
             </div>
-            <div class="input-wrapper">
-              <input type="password" id="staff-pass" class="form-input" placeholder="Enter your staff password" oninput="onStaffInput()" />
+            <div class="password-input-wrapper">
+              <input type="password" id="staff-pass" class="form-input" placeholder="Enter your staff password" autocomplete="current-password" oninput="onStaffInput()" />
+              <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('staff-pass', this)" aria-label="Toggle password visibility">
+                <i class="fa-solid fa-eye"></i>
+              </button>
             </div>
           </div>
 
           <!-- Single Primary Action (CTA) for Staff -->
           <button type="submit" id="staff-primary-cta" class="btn btn-primary btn-block" disabled>
-            <span id="staff-cta-text">Sign In to Clinic Desk</span>
+            <i class="fa-solid fa-right-to-bracket"></i>
+            <span id="staff-cta-text">Sign In to Doctor Console</span>
           </button>
         </form>
 
         <!-- Terms & Privacy Microcopy -->
         <footer class="auth-footer">
-          By proceeding, you agree to QureFlow’s <a href="javascript:void(0)">Terms of Service</a> & <a href="javascript:void(0)">Patient Privacy Charter</a>.
+          <i class="fa-solid fa-shield-halved" style="color: var(--color-success);"></i>
+          256-bit encrypted healthcare portal. By proceeding, you agree to QureFlow's <a href="javascript:void(0)">Terms</a> &amp; <a href="javascript:void(0)">Privacy Policy</a>.
         </footer>
       </section>
 
@@ -408,5 +597,30 @@
   </main>
 
   <script src="js/1-auth.js"></script>
+  <script>
+    // =====================================================
+    // Theme Toggle (Flipped Dark Mode Ratio)
+    // =====================================================
+    function toggleTheme() {
+      const isDark = document.body.classList.toggle('dark-mode');
+      if (isDark) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('qureflow-theme', 'dark');
+        document.getElementById('theme-btn').innerHTML = '<i class="fa-solid fa-sun"></i> <span>Light Mode</span>';
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+        localStorage.setItem('qureflow-theme', 'light');
+        document.getElementById('theme-btn').innerHTML = '<i class="fa-solid fa-moon"></i> <span>Dark Mode</span>';
+      }
+    }
+
+    // Restore saved theme
+    if (localStorage.getItem('qureflow-theme') === 'dark') {
+      document.body.classList.add('dark-mode');
+      document.documentElement.setAttribute('data-theme', 'dark');
+      const btn = document.getElementById('theme-btn');
+      if (btn) btn.innerHTML = '<i class="fa-solid fa-sun"></i> <span>Light Mode</span>';
+    }
+  </script>
 </body>
 </html>

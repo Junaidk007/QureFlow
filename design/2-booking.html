@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QureFlow — Screen 2: Doctor Discovery & Appointment Booking</title>
+  <title>QureFlow — Screen 3: Doctor Discovery & Appointment Booking</title>
   <link rel="stylesheet" href="css/style.css">
   <style>
-    /* Screen 2 Layout */
+    /* Screen 3 Layout */
     .app-header {
       background: var(--color-primary-surface);
       border-bottom: 1px solid var(--color-border);
@@ -25,15 +25,15 @@
     }
 
     .header-logo-icon {
-      width: 28px;
-      height: 28px;
-      background: var(--color-accent-black);
-      color: #FFFFFF;
+      width: 32px;
+      height: 32px;
+      background: var(--deep-winter-blue);
+      color: var(--snow-white);
       border-radius: var(--radius-unified);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 700;
     }
 
@@ -41,12 +41,13 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      background: #F1F5F9;
+      background: var(--frost-mist);
       padding: 6px 12px;
       border-radius: var(--radius-unified);
       font-size: 13px;
       font-weight: 500;
-      color: var(--color-accent-muted);
+      color: var(--deep-winter-blue);
+      border: 1px solid var(--color-border);
     }
 
     .booking-layout {
@@ -73,7 +74,7 @@
       padding: var(--space-4);
       border-radius: var(--radius-unified);
       border: 1px solid var(--color-border);
-      background: #FFFFFF;
+      background: var(--color-primary-surface);
       margin-bottom: var(--space-6);
       transition: all 0.15s ease;
     }
@@ -82,15 +83,20 @@
       width: 64px;
       height: 64px;
       border-radius: var(--radius-unified);
-      background: var(--color-secondary-light);
-      color: var(--color-secondary-blue);
+      background: var(--frost-mist);
+      color: var(--deep-winter-blue);
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 26px;
       font-weight: 700;
-      border: 1px solid var(--color-secondary-border);
+      border: 1px solid var(--color-border);
       flex-shrink: 0;
+    }
+
+    [data-theme="dark"] .doctor-avatar {
+      background: var(--deep-winter-blue);
+      color: var(--snow-white);
     }
 
     .doctor-meta h2 {
@@ -130,30 +136,31 @@
       padding: 10px 12px;
       border: 1px solid var(--color-border);
       border-radius: var(--radius-unified);
-      background: #FFFFFF;
+      background: var(--color-primary-surface);
       text-align: center;
       cursor: pointer;
       transition: all 0.15s ease;
     }
 
     .date-pill:hover:not(.disabled) {
-      border-color: var(--color-secondary-blue);
+      border-color: var(--deep-winter-blue);
     }
 
+    /* Selected Date Pill: Deep Winter Blue with Snow White text */
     .date-pill.active {
-      background: var(--color-accent-black);
-      color: #FFFFFF;
-      border-color: var(--color-accent-black);
+      background: var(--deep-winter-blue);
+      color: var(--snow-white);
+      border-color: var(--deep-winter-blue);
     }
 
     .date-pill.active .date-day, .date-pill.active .date-slots {
-      color: #94A3B8;
+      color: var(--frost-mist);
     }
 
     .date-pill.disabled {
       opacity: 0.4;
       cursor: not-allowed;
-      background: #F8FAFC;
+      background: var(--frost-mist);
     }
 
     .date-day {
@@ -180,10 +187,11 @@
     .type-switcher {
       display: flex;
       gap: 8px;
-      background: #F1F5F9;
+      background: var(--frost-mist);
       padding: 4px;
       border-radius: var(--radius-unified);
       margin-bottom: var(--space-6);
+      border: 1px solid var(--color-border);
     }
 
     .type-btn {
@@ -200,9 +208,9 @@
     }
 
     .type-btn.active {
-      background: #FFFFFF;
+      background: var(--color-primary-surface);
       color: var(--color-accent-black);
-      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+      box-shadow: 0 1px 2px rgba(7, 22, 41, 0.08);
     }
 
     /* Time Slot Chips Grid */
@@ -230,7 +238,7 @@
       height: 40px;
       border: 1px solid var(--color-border);
       border-radius: var(--radius-unified);
-      background: #FFFFFF;
+      background: var(--color-primary-surface);
       font-size: 13px;
       font-weight: 600;
       color: var(--color-accent-black);
@@ -242,28 +250,28 @@
     }
 
     .slot-chip:hover:not(.booked) {
-      border-color: var(--color-secondary-blue);
-      color: var(--color-secondary-blue);
-      background: var(--color-secondary-light);
+      border-color: var(--deep-winter-blue);
+      color: var(--deep-winter-blue);
+      background: var(--frost-mist);
     }
 
+    /* Selected Slot: Deep Winter Blue with Snow White text (High contrast) */
     .slot-chip.selected {
-      background: var(--color-secondary-blue);
-      color: #FFFFFF;
-      border-color: var(--color-secondary-blue);
-      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+      background: var(--deep-winter-blue) !important;
+      color: var(--snow-white) !important;
+      border-color: var(--deep-winter-blue);
+      box-shadow: 0 0 0 2px rgba(23, 52, 92, 0.2);
     }
 
     .slot-chip.booked {
-      background: #F1F5F9;
-      color: #94A3B8;
-      border-color: #E2E8F0;
+      background: var(--frost-mist);
+      color: var(--icy-steel);
+      border-color: var(--color-border);
       cursor: not-allowed;
-      text-decoration: line-through;
-      font-weight: 500;
+      opacity: 0.6;
     }
 
-    /* Sticky Summary Sidebar */
+    /* Sticky Summary Card */
     .summary-card {
       position: sticky;
       top: 70px;
@@ -272,14 +280,10 @@
     .summary-row {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       padding: 10px 0;
       border-bottom: 1px solid var(--color-border);
-      font-size: 14px;
-    }
-
-    .summary-row:last-of-type {
-      border-bottom: none;
-      margin-bottom: var(--space-4);
+      font-size: 13px;
     }
 
     .summary-label {
@@ -289,59 +293,51 @@
     .summary-val {
       font-weight: 600;
       color: var(--color-accent-black);
-      text-align: right;
     }
 
     .queue-rule-box {
-      background: var(--color-secondary-light);
-      border: 1px solid var(--color-secondary-border);
+      background: var(--frost-mist);
+      border: 1px solid var(--color-border);
       border-radius: var(--radius-unified);
       padding: 12px;
+      margin: var(--space-4) 0;
       font-size: 12px;
+      color: var(--deep-winter-blue);
       line-height: 1.4;
-      color: #1E40AF;
-      margin-bottom: var(--space-4);
     }
 
-    /* Skeleton Loading Placeholder */
-    .skeleton {
-      background: linear-gradient(90deg, #F1F5F9 25%, #E2E8F0 50%, #F1F5F9 75%);
-      background-size: 200% 100%;
-      animation: shimmer 1.5s infinite;
-      border-radius: var(--radius-unified);
+    [data-theme="dark"] .queue-rule-box {
+      background: #112540;
+      color: var(--snow-white);
     }
 
-    @keyframes shimmer {
-      0% { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
-    }
-
-    /* Confirmation Modal */
+    /* Modal Overlay */
     .modal-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(15, 23, 42, 0.6);
+      background: rgba(7, 22, 41, 0.65);
       backdrop-filter: blur(4px);
       z-index: 2000;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: var(--space-4);
+      padding: 16px;
     }
 
     .modal-card {
-      background: #FFFFFF;
+      background: var(--color-primary-surface);
+      border: 1px solid var(--color-border);
       border-radius: var(--radius-unified);
       max-width: 440px;
       width: 100%;
-      padding: var(--space-6);
+      padding: 24px;
       text-align: center;
-      box-shadow: var(--shadow-elevated);
-      animation: modalSlide 0.25s ease-out;
+      box-shadow: var(--shadow-modal);
+      animation: modalSlide 0.2s ease-out;
     }
 
     @keyframes modalSlide {
-      from { transform: translateY(16px); opacity: 0; }
+      from { transform: translateY(12px); opacity: 0; }
       to { transform: translateY(0); opacity: 1; }
     }
   </style>
@@ -352,69 +348,65 @@
   <aside class="state-controller-bar" aria-label="Interactive State Controller">
     <div class="title">
       <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#10B981;"></span>
-      <strong>Screen 2: Doctor Discovery & Booking</strong>
+      <strong>Screen 3: Doctor Discovery & Slot Booking</strong>
       <span class="badge badge-blue">Patient Tier</span>
     </div>
 
     <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
       <div class="pill-group" title="Switch UI Simulation States">
-        <span style="font-size: 11px; color: #94A3B8; padding-left: 6px;">STATE:</span>
-        <button class="state-btn active" id="state-normal-btn" onclick="setBookingState('normal')">Interactive</button>
-        <button class="state-btn" id="state-loading-btn" onclick="setBookingState('loading')">Loading</button>
-        <button class="state-btn" id="state-empty-btn" onclick="setBookingState('empty')">Empty (No Slots)</button>
-        <button class="state-btn" id="state-error-btn" onclick="setBookingState('error')">Error (Conflict)</button>
-        <button class="state-btn" id="state-success-btn" onclick="setBookingState('success')">Success Modal</button>
+        <span style="font-size: 11px; color: var(--icy-steel); padding-left: 6px;">STATE:</span>
+        <button class="state-btn active" id="state-normal-btn" onclick="setBookingState('normal')">Available</button>
+        <button class="state-btn" id="state-empty-btn" onclick="setBookingState('empty')">No Slots (Empty)</button>
+        <button class="state-btn" id="state-collision-btn" onclick="simulateSlotCollision()">Slot Collision (Error)</button>
       </div>
 
+      <button class="theme-toggle-btn" id="theme-btn" onclick="toggleTheme()" title="Flip Color Ratio for Dark Mode">
+        <i class="fa-solid fa-moon"></i> <span>Dark Mode</span>
+      </button>
+
       <div class="pill-group">
-        <a href="1-auth.html" class="state-btn" style="text-decoration:none;">← Screen 1</a>
-        <a href="3-checkin.html" class="state-btn" style="text-decoration:none;">Screen 3 →</a>
+        <a href="patient-home.html" class="state-btn" style="text-decoration:none;"><i class="fa-solid fa-arrow-left"></i> Home</a>
+        <a href="index.html" class="state-btn" style="text-decoration:none;">Gallery Hub <i class="fa-solid fa-table-cells-large"></i></a>
       </div>
     </div>
   </aside>
 
-  <!-- Navigation Header -->
+  <!-- App Header -->
   <header class="app-header">
-    <a href="1-auth.html" class="header-brand">
+    <a href="patient-home.html" class="header-brand">
       <div class="header-logo-icon">Q</div>
       <strong style="font-family: var(--font-heading); font-size: 18px;">QureFlow</strong>
     </a>
-    <div class="user-pill">
-      <span>👤</span>
-      <span>Rahul Verma (+91 98765 43210)</span>
+    <div style="display:flex; align-items:center; gap:12px;">
+      <div class="user-pill">
+        <i class="fa-solid fa-user"></i> <span>Rahul Verma (+91 98765-XXXXX)</span>
+      </div>
     </div>
   </header>
 
-  <!-- Dynamic Error Alert Toast (Fixed) -->
-  <div id="booking-toast" style="display:none; max-width: 960px; margin: 16px auto -8px; padding: 0 16px;">
-    <div class="alert alert-error" id="toast-message">
-      ⚠️ Selected slot was just booked by another patient. We've refreshed the schedule.
-    </div>
-  </div>
-
-  <!-- Main Booking Canvas -->
+  <!-- Main Viewport Canvas -->
   <main class="booking-layout">
 
-    <!-- LEFT COLUMN: Selection Engine -->
+    <!-- LEFT COLUMN: Doctor Details & Slot Selection -->
     <section>
       
-      <!-- Doctor Card -->
+      <!-- Doctor Card (shadcn/ui card) -->
       <div class="doctor-card" id="doctor-card-container">
-        <div class="doctor-avatar">👨‍⚕️</div>
+        <div class="doctor-avatar"><i class="fa-solid fa-user-doctor"></i></div>
         <div class="doctor-meta" style="flex:1;">
           <h2>Dr. Rajesh Sharma</h2>
-          <p class="body-text" style="font-size:13px;">MBBS, MD — General Medicine (Apollo Clinic • Room 102)</p>
+          <p class="body-text" style="font-size:13px;">MBBS, MD — General Medicine (Apollo Clinic • Cabin 02)</p>
           <div class="doctor-tags">
-            <span class="badge badge-green">● Available Today</span>
-            <span class="badge badge-blue">⏱️ Avg. Consult: 12 min</span>
-            <span class="badge" style="background:#F1F5F9; color:#475569;">⭐ 4.9 (420+ visits)</span>
+            <span class="badge badge-green"><i class="fa-solid fa-circle-check"></i> Available Today</span>
+            <span class="badge badge-blue"><i class="fa-regular fa-clock"></i> Avg. Consult: 12 min</span>
+            <span class="badge" style="background:var(--frost-mist); color:var(--deep-winter-blue);"><i class="fa-solid fa-star" style="color:#F59E0B;"></i> 4.9 (420+ visits)</span>
           </div>
         </div>
       </div>
 
-      <!-- Visit Type Switcher -->
+      <!-- Visit Type Switcher (shadcn/ui tabs) -->
       <div class="section-title">
-        <span>Visit Type</span>
+        <span><i class="fa-solid fa-stethoscope"></i> Consultation Type</span>
       </div>
       <div class="type-switcher" role="radiogroup">
         <button class="type-btn active" id="type-new" onclick="selectVisitType('NEW')">
@@ -427,34 +419,34 @@
 
       <!-- Date Carousel -->
       <div class="section-title">
-        <span>Select Date</span>
+        <span><i class="fa-regular fa-calendar-days"></i> Select Date</span>
         <span class="text-small" style="color:var(--color-accent-muted);">September 2026</span>
       </div>
       <div class="date-strip" id="date-strip-container">
-        <div class="date-pill active" onclick="selectDate(this, 'Today, Sep 26', 8)">
+        <div class="date-pill active" onclick="selectDate(this, 'Today, Sep 27', 8)">
           <div class="date-day">Today</div>
-          <div class="date-num">26</div>
+          <div class="date-num">27</div>
           <div class="date-slots">8 open</div>
         </div>
-        <div class="date-pill" onclick="selectDate(this, 'Sun, Sep 27', 12)">
-          <div class="date-day">Sun</div>
-          <div class="date-num">27</div>
-          <div class="date-slots">12 open</div>
-        </div>
-        <div class="date-pill" onclick="selectDate(this, 'Mon, Sep 28', 15)">
+        <div class="date-pill" onclick="selectDate(this, 'Mon, Sep 28', 12)">
           <div class="date-day">Mon</div>
           <div class="date-num">28</div>
-          <div class="date-slots">15 open</div>
+          <div class="date-slots">12 open</div>
         </div>
-        <div class="date-pill" onclick="selectDate(this, 'Tue, Sep 29', 6)">
+        <div class="date-pill" onclick="selectDate(this, 'Tue, Sep 29', 15)">
           <div class="date-day">Tue</div>
           <div class="date-num">29</div>
-          <div class="date-slots">6 open</div>
+          <div class="date-slots">15 open</div>
         </div>
-        <div class="date-pill disabled" title="Doctor OPD Closed on Wednesdays">
+        <div class="date-pill" onclick="selectDate(this, 'Wed, Sep 30', 6)">
           <div class="date-day">Wed</div>
           <div class="date-num">30</div>
-          <div class="date-slots" style="color:#94A3B8;">Closed</div>
+          <div class="date-slots">6 open</div>
+        </div>
+        <div class="date-pill disabled" title="Doctor OPD Closed on Thursdays">
+          <div class="date-day">Thu</div>
+          <div class="date-num">01</div>
+          <div class="date-slots" style="color:var(--icy-steel);">Closed</div>
         </div>
       </div>
 
@@ -464,13 +456,13 @@
         <!-- Morning Session -->
         <div class="slot-group">
           <div class="slot-group-header">
-            <span>🌅 Morning Slots (09:30 AM – 12:30 PM)</span>
+            <span><i class="fa-regular fa-sun" style="color:#F59E0B;"></i> Morning Slots (09:30 AM – 12:30 PM)</span>
           </div>
           <div class="slots-grid">
             <button class="slot-chip" onclick="selectSlot(this, '09:30 AM')">09:30 AM</button>
             <button class="slot-chip booked" disabled title="Slot booked">10:00 AM</button>
-            <button class="slot-chip" onclick="selectSlot(this, '10:30 AM')">10:30 AM</button>
-            <button class="slot-chip selected" onclick="selectSlot(this, '11:00 AM')">11:00 AM</button>
+            <button class="slot-chip selected" onclick="selectSlot(this, '10:30 AM')">10:30 AM</button>
+            <button class="slot-chip" onclick="selectSlot(this, '11:00 AM')">11:00 AM</button>
             <button class="slot-chip" onclick="selectSlot(this, '11:30 AM')">11:30 AM</button>
             <button class="slot-chip" onclick="selectSlot(this, '12:00 PM')">12:00 PM</button>
           </div>
@@ -479,7 +471,7 @@
         <!-- Evening Session -->
         <div class="slot-group">
           <div class="slot-group-header">
-            <span>🌆 Evening Slots (04:30 PM – 07:30 PM)</span>
+            <span><i class="fa-solid fa-cloud-moon" style="color:var(--deep-winter-blue);"></i> Evening Slots (04:30 PM – 07:30 PM)</span>
           </div>
           <div class="slots-grid">
             <button class="slot-chip" onclick="selectSlot(this, '04:30 PM')">04:30 PM</button>
@@ -493,26 +485,28 @@
 
       </div>
 
-      <!-- Empty State Container (Hidden by default) -->
+      <!-- Empty State Container -->
       <div id="empty-state-view" class="card" style="display:none; text-align:center; padding: 48px 24px;">
-        <div style="font-size: 40px; margin-bottom: 12px;">📅</div>
+        <div style="font-size: 40px; margin-bottom: 12px; color:var(--deep-winter-blue);">
+          <i class="fa-regular fa-calendar-xmark"></i>
+        </div>
         <h3 style="font-size: 18px; margin-bottom: 6px;">No Open Slots Available</h3>
         <p class="body-text" style="max-width: 360px; margin: 0 auto 20px;">
           Dr. Rajesh Sharma has no available consultation slots on this date.
         </p>
-        <button class="btn btn-secondary" onclick="selectDate(document.querySelector('.date-pill:first-child'), 'Today, Sep 26', 8)">
+        <button class="btn btn-secondary" onclick="selectDate(document.querySelector('.date-pill:first-child'), 'Today, Sep 27', 8)">
           Find Next Available Date (Today)
         </button>
       </div>
 
     </section>
 
-    <!-- RIGHT COLUMN: Sticky Summary & ONE Primary Action -->
+    <!-- RIGHT COLUMN: Sticky Summary & High-Contrast Primary CTA -->
     <aside>
       <div class="card summary-card">
         <h3 style="font-size: 16px; margin-bottom: var(--space-4); display: flex; align-items: center; justify-content: space-between;">
           <span>Booking Summary</span>
-          <span class="badge badge-blue">Slot Reserved</span>
+          <span class="badge badge-blue">Slot Selected</span>
         </h3>
 
         <div class="summary-row">
@@ -527,26 +521,27 @@
 
         <div class="summary-row">
           <span class="summary-label">Date</span>
-          <span class="summary-val" id="sum-date">Today, Sep 26</span>
+          <span class="summary-val" id="sum-date">Today, Sep 27</span>
         </div>
 
         <div class="summary-row">
           <span class="summary-label">Time Slot</span>
-          <span class="summary-val" id="sum-slot" style="color:var(--color-secondary-blue);">11:00 AM</span>
+          <span class="summary-val" id="sum-slot" style="color:var(--deep-winter-blue);">10:30 AM</span>
         </div>
 
         <div class="summary-row">
           <span class="summary-label">Clinic Location</span>
-          <span class="summary-val">Room 102, Main OPD</span>
+          <span class="summary-val">Cabin 02, Main OPD</span>
         </div>
 
         <!-- Anti-Ghost Queue Rule Box -->
         <div class="queue-rule-box">
-          ℹ️ <strong>Physical Arrival Rule:</strong> Booking reserves your slot. Your live physical queue position is minted upon scanning the clinic QR code on arrival.
+          <i class="fa-solid fa-circle-info"></i> <strong>Physical Arrival Rule:</strong> Booking reserves your slot. Your live physical queue position is minted upon scanning the clinic QR code on arrival (±15 mins).
         </div>
 
         <!-- THE ONE PRIMARY ACTION (CTA) -->
         <button id="book-slot-cta" class="btn btn-primary btn-block" onclick="handleConfirmBooking()">
+          <i class="fa-solid fa-calendar-check"></i>
           <span id="book-cta-text">Confirm & Book Slot</span>
         </button>
       </div>
@@ -554,18 +549,18 @@
 
   </main>
 
-  <!-- SUCCESS CONFIRMATION MODAL (Screen 2 Success State) -->
+  <!-- SUCCESS CONFIRMATION MODAL (Screen 3 Success State) -->
   <div class="modal-overlay" id="success-modal" style="display: none;">
     <div class="modal-card">
-      <div style="width: 56px; height: 56px; border-radius: 50%; background: var(--color-success-bg); color: var(--color-success); font-size: 28px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
-        ✓
+      <div style="width: 56px; height: 56px; border-radius: 50%; background: var(--color-success-bg); color: var(--color-success); font-size: 26px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+        <i class="fa-solid fa-check"></i>
       </div>
       <h2 style="font-size: 22px; margin-bottom: 6px;">Slot Confirmed!</h2>
       <p class="body-text" style="font-size: 14px; margin-bottom: 20px;">
-        Appointment registered successfully. Your booking details:
+        Appointment registered successfully in database. Details:
       </p>
 
-      <div style="background: #F8FAFC; border: 1px solid var(--color-border); border-radius: var(--radius-unified); padding: 14px; text-align: left; margin-bottom: 20px; font-size: 13px;">
+      <div style="background: var(--frost-mist); border: 1px solid var(--color-border); border-radius: var(--radius-unified); padding: 14px; text-align: left; margin-bottom: 20px; font-size: 13px;">
         <div style="display:flex; justify-content:space-between; margin-bottom: 6px;">
           <span style="color:var(--color-accent-muted);">Booking ID:</span>
           <strong>#BK-9042</strong>
@@ -576,21 +571,21 @@
         </div>
         <div style="display:flex; justify-content:space-between; margin-bottom: 6px;">
           <span style="color:var(--color-accent-muted);">Scheduled Slot:</span>
-          <strong id="modal-slot-text">Today, Sep 26 at 11:00 AM</strong>
+          <strong id="modal-slot-text">Today, Sep 27 at 10:30 AM</strong>
         </div>
         <div style="display:flex; justify-content:space-between;">
           <span style="color:var(--color-accent-muted);">Check-In Window:</span>
-          <span class="badge badge-amber">10:45 AM – 11:15 AM</span>
+          <span class="badge badge-amber"><i class="fa-regular fa-clock"></i> 10:15 AM – 10:45 AM</span>
         </div>
       </div>
 
       <div class="alert alert-success" style="font-size: 12px; margin-bottom: 20px; text-align: left;">
-        📍 <strong>Next Step:</strong> When you arrive at the clinic, open Screen 3 and scan the physical QR code at the entrance to get your live queue token.
+        <i class="fa-solid fa-location-dot"></i> <strong>Next Step:</strong> When you arrive at the clinic, open Screen 4 and scan the entrance QR standee to receive your live queue token.
       </div>
 
-      <!-- Progression CTA to Screen 3 -->
+      <!-- Progression CTA to Screen 4 -->
       <a href="3-checkin.html" class="btn btn-primary btn-block" style="text-decoration:none; margin-bottom: 8px;">
-        Proceed to QR Check-in (Screen 3) →
+        <i class="fa-solid fa-qrcode"></i> Proceed to QR Check-in (Screen 4) →
       </a>
       <button class="btn btn-ghost btn-block" onclick="closeSuccessModal()">
         Back to Edit Booking
@@ -599,5 +594,26 @@
   </div>
 
   <script src="js/2-booking.js"></script>
+  <script>
+    function toggleTheme() {
+      const isDark = document.body.classList.toggle('dark-mode');
+      if (isDark) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('qureflow-theme', 'dark');
+        document.getElementById('theme-btn').innerHTML = '<i class="fa-solid fa-sun"></i> <span>Light Mode</span>';
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+        localStorage.setItem('qureflow-theme', 'light');
+        document.getElementById('theme-btn').innerHTML = '<i class="fa-solid fa-moon"></i> <span>Dark Mode</span>';
+      }
+    }
+
+    if (localStorage.getItem('qureflow-theme') === 'dark') {
+      document.body.classList.add('dark-mode');
+      document.documentElement.setAttribute('data-theme', 'dark');
+      const btn = document.getElementById('theme-btn');
+      if (btn) btn.innerHTML = '<i class="fa-solid fa-sun"></i> <span>Light Mode</span>';
+    }
+  </script>
 </body>
 </html>

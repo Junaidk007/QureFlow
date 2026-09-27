@@ -65,7 +65,8 @@ flowchart TD
 
 | Module | Endpoint | Method | Request Body | Response Body | Controller Logic | Complete Flow |
 |---|---|---|---|---|---|---|
-| **Auth** | `/api/v1/auth/login` | `POST` | `{ phone, password }` | `{ token, user: { id, role } }` | Find user -> Verify password -> Generate JWT. | `Client -> Validation -> AuthController -> DB -> Res` |
+| **Auth** | `/api/v1/auth/register` | `POST` | `{ username, email, password }` | `{ token, user: { id, role } }` | Validate uniqueness -> Hash password -> Create User -> Generate JWT. | `Client -> Joi Validation -> AuthController -> DB -> Res` |
+| **Auth** | `/api/v1/auth/login` | `POST` | `{ identifier, password }` (identifier = email OR username) | `{ token, user: { id, role } }` | Find user by email/username -> bcrypt.compare -> Generate JWT. | `Client -> Joi Validation -> AuthController -> DB -> Res` |
 | **Booking** | `/api/v1/appointments` | `POST` | `{ doctorId, date, time, type }` | `{ appointmentId, status }` | Validate doctor -> Check slot -> Create record. | `Client -> Auth -> Validation -> ApptController -> DB -> Res` |
 | **Check-in** | `/api/v1/visits/check-in` | `POST` | `{ clinicId, appointmentId }` | `{ visitId, tokenId, status, ETA }` | Validate time window -> Generate token -> Fire WS event. | `Client -> Auth -> CheckInValidator -> VisitController -> DB/WS -> Res` |
 | **Queue** | `/api/v1/visits/my-status` | `GET` | *None* | `{ tokenId, position, patientsAhead, ETA, doctorStatus }` | Count earlier `IN_QUEUE` visits -> Calculate ETA. | `Client -> Auth -> QueueController -> DB -> Res` |
@@ -84,13 +85,16 @@ Stores all users including Patients, Doctors, and Receptionists.
   "_id": "ObjectId",
   "role": "enum('PATIENT', 'DOCTOR', 'RECEPTIONIST')",
   "name": "String",
-  "phone": "String (Unique)",
-  "email": "String",
-  "passwordHash": "String",
-  "clinicId": "ObjectId (for Doctors & Receptionists)",
-  "specialization": "String (for Doctors)"
+  "username": "String (Unique — used for login identifier)",
+  "email": "String (Unique — used for login identifier)",
+  "passwordHash": "String (bcrypt)",
+  "clinicId": "ObjectId (for Doctors & Receptionists only)",
+  "specialization": "String (for Doctors only)",
+  "createdAt": "Timestamp"
 }
 ```
+
+> **Auth Note:** Patients register with `username + email + password`. Login accepts `email OR username` as the identifier field. No phone field or OTP in the system.
 
 ### Appointments Collection
 Stores scheduled appointments.

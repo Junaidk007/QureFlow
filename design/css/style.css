@@ -1,23 +1,44 @@
 /* ==========================================================================
-   QureFlow Design System - Master CSS (docs/style-guide.md compliant)
+   QureFlow Design System - Master CSS (Winter Arctic Frost Edition)
+   Compliant with docs/style-guide.md & docs/UI-UX.md
+   Technologies: shadcn/ui component patterns, Font Awesome 6, Material UI
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
 
 :root {
-  /* Colors */
-  --color-primary-bg: #FAFAFC;
-  --color-primary-surface: #FFFFFF;
-  --color-accent-black: #0F172A;
-  --color-accent-hover: #1E293B;
-  --color-accent-muted: #475569;
-  --color-secondary-blue: #2563EB;
-  --color-secondary-hover: #1D4ED8;
-  --color-secondary-light: #EFF6FF;
-  --color-secondary-border: #DBEAFE;
-  --color-border: #E2E8F0;
+  /* --- Arctic Frost Primitive Tokens --- */
+  --frost-navy: #071629;
+  --deep-winter-blue: #17345C;
+  --icy-steel: #9DB7D5;
+  --frost-mist: #EAF4FF;
+  --snow-white: #FFFFFF;
+  --midnight-black: #050B14;
 
-  /* Feedback Colors */
+  /* --- Semantic Light Mode Tokens --- */
+  --color-primary-bg: var(--frost-mist);
+  --color-primary-surface: var(--snow-white);
+  --color-accent-black: var(--frost-navy);
+  --color-accent-hover: #0d223f;
+  --color-accent-muted: #475569;
+  --color-secondary-blue: var(--deep-winter-blue);
+  --color-secondary-hover: var(--frost-navy);
+  --color-secondary-light: var(--frost-mist);
+  --color-secondary-border: #D4E4F5;
+  --color-border: #D4E4F5;
+  --color-input-border: #D4E4F5;
+  --color-card-border: #D4E4F5;
+
+  /* --- High Contrast CTA & Text Defaults --- */
+  --color-btn-primary-bg: var(--deep-winter-blue);
+  --color-btn-primary-text: var(--snow-white);
+  --color-btn-secondary-bg: var(--frost-mist);
+  --color-btn-secondary-text: var(--deep-winter-blue);
+  --color-btn-secondary-border: #D4E4F5;
+
+  /* --- Feedback Colors --- */
   --color-success: #10B981;
   --color-success-bg: #ECFDF5;
   --color-success-border: #A7F3D0;
@@ -28,14 +49,14 @@
   --color-error-bg: #FEF2F2;
   --color-error-border: #FECACA;
 
-  /* Typography */
+  /* --- Typography --- */
   --font-heading: 'Plus Jakarta Sans', 'Netflix Sans', -apple-system, sans-serif;
   --font-body: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
-  /* Strict Unified Radius */
+  /* --- Strict Unified Radius (8px) --- */
   --radius-unified: 8px;
 
-  /* Spacing Scale (4px Base) */
+  /* --- Spacing Scale (4px Base) --- */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -44,9 +65,37 @@
   --space-8: 32px;
   --space-12: 48px;
 
-  /* Elevation */
-  --shadow-card: 0 1px 3px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.02);
-  --shadow-elevated: 0 10px 25px -5px rgba(15, 23, 42, 0.06), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+  /* --- Elevation Shadows --- */
+  --shadow-card: 0 1px 3px rgba(7, 22, 41, 0.05), 0 1px 2px rgba(7, 22, 41, 0.03);
+  --shadow-elevated: 0 10px 25px -5px rgba(7, 22, 41, 0.08), 0 8px 10px -6px rgba(7, 22, 41, 0.04);
+  --shadow-modal: 0 20px 25px -5px rgba(7, 22, 41, 0.2), 0 10px 10px -5px rgba(7, 22, 41, 0.1);
+}
+
+/* ==========================================================================
+   DARK MODE — FLIPPED COLOR RATIO ARCHITECTURE
+   ========================================================================== */
+[data-theme="dark"], body.dark-mode {
+  --color-primary-bg: var(--frost-navy);
+  --color-primary-surface: #0D1F38;
+  --color-accent-black: var(--snow-white);
+  --color-accent-hover: #FFFFFF;
+  --color-accent-muted: var(--icy-steel);
+  --color-secondary-blue: var(--icy-steel);
+  --color-secondary-hover: var(--snow-white);
+  --color-secondary-light: #17345C;
+  --color-secondary-border: rgba(157, 183, 213, 0.25);
+  --color-border: rgba(157, 183, 213, 0.22);
+  --color-input-border: rgba(157, 183, 213, 0.3);
+  --color-card-border: rgba(157, 183, 213, 0.22);
+
+  --color-btn-primary-bg: var(--icy-steel);
+  --color-btn-primary-text: var(--frost-navy);
+  --color-btn-secondary-bg: #17345C;
+  --color-btn-secondary-text: var(--snow-white);
+  --color-btn-secondary-border: rgba(157, 183, 213, 0.3);
+
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.35);
+  --shadow-elevated: 0 8px 20px rgba(0, 0, 0, 0.45);
 }
 
 /* Base Reset */
@@ -64,12 +113,22 @@ body {
   font-size: 15px;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Material Symbols Icon Alignment */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Typography Classes */
 h1, .h1 {
   font-family: var(--font-heading);
-  font-size: 32px;
+  font-size: 30px;
   font-weight: 700;
   line-height: 1.2;
   letter-spacing: -0.02em;
@@ -82,6 +141,14 @@ h2, .h2 {
   font-weight: 600;
   line-height: 1.3;
   letter-spacing: -0.01em;
+  color: var(--color-accent-black);
+}
+
+h3, .h3 {
+  font-family: var(--font-heading);
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.4;
   color: var(--color-accent-black);
 }
 
@@ -98,16 +165,21 @@ p, .body-text {
   letter-spacing: 0.02em;
 }
 
-/* Card Component */
+/* ==========================================================================
+   SHADCN / UI COMPONENT STYLES
+   ========================================================================== */
+
+/* 1. Card (shadcn/ui: card) */
 .card {
   background: var(--color-primary-surface);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-card-border);
   border-radius: var(--radius-unified);
   padding: var(--space-6);
   box-shadow: var(--shadow-card);
+  transition: all 0.2s ease;
 }
 
-/* Buttons */
+/* 2. Buttons (shadcn/ui: button) */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -136,28 +208,40 @@ p, .body-text {
   pointer-events: none;
 }
 
+/* High-Contrast Primary CTA: Secondary Blue with Snow White text */
 .btn-primary {
-  background-color: var(--color-accent-black);
-  color: #FFFFFF;
+  background-color: var(--color-btn-primary-bg);
+  color: var(--color-btn-primary-text) !important;
+  border-color: transparent;
+}
+
+.btn-primary i, .btn-primary .material-symbols-outlined {
+  color: var(--color-btn-primary-text) !important;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background-color: var(--color-accent-hover);
+  opacity: 0.92;
+  box-shadow: 0 2px 8px rgba(7, 22, 41, 0.2);
 }
 
+/* Secondary Button: Frost Mist with Deep Winter Blue text */
 .btn-secondary {
-  background-color: var(--color-secondary-light);
-  color: var(--color-secondary-blue);
-  border-color: var(--color-secondary-border);
+  background-color: var(--color-btn-secondary-bg);
+  color: var(--color-btn-secondary-text) !important;
+  border-color: var(--color-btn-secondary-border);
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background-color: #DBEAFE;
+  background-color: #DDEEFE;
+}
+
+[data-theme="dark"] .btn-secondary:hover:not(:disabled) {
+  background-color: #1f4273;
 }
 
 .btn-ghost {
   background: transparent;
-  color: var(--color-accent-muted);
+  color: var(--color-accent-black);
   border-color: transparent;
 }
 
@@ -167,20 +251,20 @@ p, .body-text {
 }
 
 .btn-destructive {
-  background: transparent;
+  background: var(--color-error-bg);
   color: var(--color-error);
   border-color: var(--color-error-border);
 }
 
 .btn-destructive:hover:not(:disabled) {
-  background: var(--color-error-bg);
+  background: #FEE2E2;
 }
 
 .btn-block {
   width: 100%;
 }
 
-/* Form Inputs */
+/* 3. Form Inputs & Select (shadcn/ui: input, select) */
 .form-group {
   display: flex;
   flex-direction: column;
@@ -193,6 +277,9 @@ p, .body-text {
   font-size: 13px;
   font-weight: 600;
   color: var(--color-accent-black);
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .input-wrapper {
@@ -205,7 +292,7 @@ p, .body-text {
   width: 100%;
   height: 44px;
   background: var(--color-primary-surface);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-input-border);
   border-radius: var(--radius-unified);
   padding: 0 14px;
   font-size: 15px;
@@ -216,17 +303,21 @@ p, .body-text {
 }
 
 .form-input::placeholder {
-  color: #94A3B8;
+  color: var(--icy-steel);
 }
 
 .form-input:focus, .form-select:focus {
   border-color: var(--color-secondary-blue);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  box-shadow: 0 0 0 3px rgba(23, 52, 92, 0.15);
+}
+
+[data-theme="dark"] .form-input:focus, [data-theme="dark"] .form-select:focus {
+  box-shadow: 0 0 0 3px rgba(157, 183, 213, 0.25);
 }
 
 .form-input.is-error {
   border-color: var(--color-error);
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
   animation: inputShake 0.3s ease-in-out;
 }
 
@@ -236,7 +327,7 @@ p, .body-text {
   75% { transform: translateX(4px); }
 }
 
-/* Badges */
+/* 4. Badges (shadcn/ui: badge) */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -250,9 +341,15 @@ p, .body-text {
 }
 
 .badge-blue {
-  background: var(--color-secondary-light);
-  color: #1D4ED8;
+  background: var(--frost-mist);
+  color: var(--deep-winter-blue);
   border: 1px solid var(--color-secondary-border);
+}
+
+[data-theme="dark"] .badge-blue {
+  background: #17345C;
+  color: var(--snow-white);
+  border-color: rgba(157, 183, 213, 0.3);
 }
 
 .badge-green {
@@ -273,7 +370,7 @@ p, .body-text {
   border: 1px solid var(--color-error-border);
 }
 
-/* Alert Notification Bars */
+/* 5. Alerts & Toasts */
 .alert {
   display: flex;
   align-items: center;
@@ -298,13 +395,108 @@ p, .body-text {
   color: #065F46;
 }
 
-/* Interactive Prototype State Control Bar (Sticky Top) */
+/* 6. Tabs (shadcn/ui: tabs) */
+.tabs-list {
+  display: flex;
+  background: var(--color-secondary-light);
+  padding: 4px;
+  border-radius: var(--radius-unified);
+  border: 1px solid var(--color-border);
+  gap: 4px;
+}
+
+.tab-trigger {
+  flex: 1;
+  height: 36px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-accent-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+
+.tab-trigger.active {
+  background: var(--color-primary-surface);
+  color: var(--color-accent-black);
+  box-shadow: 0 1px 2px rgba(7, 22, 41, 0.08);
+}
+
+/* 7. Table (shadcn/ui: table) */
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-unified);
+  background: var(--color-primary-surface);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 14px;
+}
+
+.data-table th {
+  background: var(--frost-mist);
+  color: var(--deep-winter-blue);
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+[data-theme="dark"] .data-table th {
+  background: #17345C;
+  color: var(--snow-white);
+}
+
+.data-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-accent-black);
+}
+
+.data-table tr:hover td {
+  background: rgba(234, 244, 255, 0.4);
+}
+
+[data-theme="dark"] .data-table tr:hover td {
+  background: rgba(23, 52, 92, 0.3);
+}
+
+/* 8. Skeleton Shimmer (shadcn/ui: skeleton) */
+.skeleton {
+  background: linear-gradient(90deg, rgba(157, 183, 213, 0.15) 25%, rgba(157, 183, 213, 0.3) 50%, rgba(157, 183, 213, 0.15) 75%);
+  background-size: 200% 100%;
+  animation: skeletonPulse 1.5s ease-in-out infinite;
+  border-radius: var(--radius-unified);
+}
+
+@keyframes skeletonPulse {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ==========================================================================
+   STATE CONTROLLER & GLOBAL HEADER (Interactive Preview)
+   ========================================================================== */
 .state-controller-bar {
   position: sticky;
   top: 0;
   z-index: 1000;
-  background: #0F172A;
-  color: #E2E8F0;
+  background: var(--frost-navy);
+  color: var(--frost-mist);
   padding: 10px 16px;
   display: flex;
   flex-wrap: wrap;
@@ -312,7 +504,7 @@ p, .body-text {
   justify-content: space-between;
   gap: 12px;
   font-size: 13px;
-  border-bottom: 1px solid #334155;
+  border-bottom: 1px solid rgba(157, 183, 213, 0.2);
 }
 
 .state-controller-bar .title {
@@ -320,14 +512,14 @@ p, .body-text {
   align-items: center;
   gap: 8px;
   font-weight: 600;
-  color: #FFFFFF;
+  color: var(--snow-white);
 }
 
 .state-controller-bar .pill-group {
   display: flex;
   align-items: center;
   gap: 6px;
-  background: #1E293B;
+  background: #112540;
   padding: 3px;
   border-radius: var(--radius-unified);
 }
@@ -335,7 +527,7 @@ p, .body-text {
 .state-btn {
   background: transparent;
   border: none;
-  color: #94A3B8;
+  color: var(--icy-steel);
   padding: 4px 10px;
   border-radius: 6px;
   font-size: 12px;
@@ -345,10 +537,30 @@ p, .body-text {
 }
 
 .state-btn:hover {
-  color: #FFFFFF;
+  color: var(--snow-white);
 }
 
 .state-btn.active {
-  background: var(--color-secondary-blue);
-  color: #FFFFFF;
+  background: var(--deep-winter-blue);
+  color: var(--snow-white);
+}
+
+/* Theme Toggle Button */
+.theme-toggle-btn {
+  background: #112540;
+  color: var(--snow-white);
+  border: 1px solid rgba(157, 183, 213, 0.25);
+  border-radius: var(--radius-unified);
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+
+.theme-toggle-btn:hover {
+  background: var(--deep-winter-blue);
 }

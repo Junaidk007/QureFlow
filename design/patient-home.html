@@ -25,15 +25,15 @@
     }
 
     .header-logo-icon {
-      width: 28px;
-      height: 28px;
-      background: var(--color-accent-black);
-      color: #FFFFFF;
+      width: 32px;
+      height: 32px;
+      background: var(--deep-winter-blue);
+      color: var(--snow-white);
       border-radius: var(--radius-unified);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 700;
     }
 
@@ -62,17 +62,18 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: #F1F5F9;
+      background: var(--frost-mist);
+      border: 1px solid var(--color-border);
       padding: 6px 12px;
       border-radius: var(--radius-unified);
       font-size: 13px;
       font-weight: 500;
-      color: var(--color-accent-muted);
+      color: var(--deep-winter-blue);
     }
 
-    /* Hero Dynamic Context Card (Changes depending on Patient Lifecycle) */
+    /* Hero Dynamic Context Card (shadcn/ui card) */
     .hero-context-card {
-      background: #FFFFFF;
+      background: var(--color-primary-surface);
       border: 1px solid var(--color-border);
       border-radius: var(--radius-unified);
       padding: var(--space-6);
@@ -90,7 +91,7 @@
       left: 0;
       right: 0;
       height: 4px;
-      background: var(--color-secondary-blue);
+      background: var(--deep-winter-blue);
     }
 
     /* Quick Action 4-Grid */
@@ -108,7 +109,7 @@
     }
 
     .action-card {
-      background: #FFFFFF;
+      background: var(--color-primary-surface);
       border: 1px solid var(--color-border);
       border-radius: var(--radius-unified);
       padding: 18px 14px;
@@ -125,7 +126,7 @@
 
     .action-card:hover {
       transform: translateY(-2px);
-      border-color: var(--color-secondary-blue);
+      border-color: var(--deep-winter-blue);
       box-shadow: var(--shadow-elevated);
     }
 
@@ -133,12 +134,17 @@
       width: 44px;
       height: 44px;
       border-radius: var(--radius-unified);
-      background: var(--color-secondary-light);
-      color: var(--color-secondary-blue);
+      background: var(--frost-mist);
+      color: var(--deep-winter-blue);
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 20px;
+    }
+
+    [data-theme="dark"] .action-icon {
+      background: #17345C;
+      color: var(--snow-white);
     }
 
     .action-title {
@@ -173,7 +179,7 @@
     }
 
     .doc-mini-card {
-      background: #FFFFFF;
+      background: var(--color-primary-surface);
       border: 1px solid var(--color-border);
       border-radius: var(--radius-unified);
       padding: 16px;
@@ -185,7 +191,7 @@
 
     /* Past Visit Tile */
     .past-visit-card {
-      background: #FFFFFF;
+      background: var(--color-primary-surface);
       border: 1px solid var(--color-border);
       border-radius: var(--radius-unified);
       padding: 14px 16px;
@@ -203,21 +209,25 @@
   <aside class="state-controller-bar" aria-label="Interactive State Controller">
     <div class="title">
       <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#10B981;"></span>
-      <strong>Patient Home Screen</strong>
+      <strong>Screen 2: Patient Home Dashboard</strong>
       <span class="badge badge-blue">Patient Tier</span>
     </div>
 
     <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
       <div class="pill-group" title="Switch UI Simulation States">
-        <span style="font-size: 11px; color: #94A3B8; padding-left: 6px;">PATIENT STATE:</span>
-        <button class="state-btn active" id="mode-active-queue-btn" onclick="setHomeMode('in_queue')">Has Live Token (#A-14)</button>
-        <button class="state-btn" id="mode-booked-btn" onclick="setHomeMode('booked_today')">Booked Today (Needs Check-in)</button>
+        <span style="font-size: 11px; color: var(--icy-steel); padding-left: 6px;">PATIENT STATE:</span>
+        <button class="state-btn active" id="mode-active-queue-btn" onclick="setHomeMode('in_queue')">Live Token (#A-17)</button>
+        <button class="state-btn" id="mode-booked-btn" onclick="setHomeMode('booked_today')">Booked Today</button>
         <button class="state-btn" id="mode-empty-btn" onclick="setHomeMode('empty')">No Active Visits</button>
       </div>
 
+      <button class="theme-toggle-btn" id="theme-btn" onclick="toggleTheme()" title="Flip Color Ratio for Dark Mode">
+        <i class="fa-solid fa-moon"></i> <span>Dark Mode</span>
+      </button>
+
       <div class="pill-group">
-        <a href="1-auth.html" class="state-btn" style="text-decoration:none;">← Log Out</a>
-        <a href="index.html" class="state-btn" style="text-decoration:none;">Gallery Hub ▤</a>
+        <a href="1-auth.html" class="state-btn" style="text-decoration:none;"><i class="fa-solid fa-arrow-left"></i> Log Out</a>
+        <a href="index.html" class="state-btn" style="text-decoration:none;">Gallery Hub <i class="fa-solid fa-table-cells-large"></i></a>
       </div>
     </div>
   </aside>
@@ -230,9 +240,9 @@
     </a>
     <div style="display:flex; align-items:center; gap:12px;">
       <div class="clinic-location-badge">
-        <span>🏥 Apollo Health Hub — Main OPD</span>
+        <i class="fa-solid fa-hospital"></i> <span>Apollo Health Hub — Main OPD</span>
       </div>
-      <div style="width:32px; height:32px; border-radius:50%; background:var(--color-accent-black); color:#FFF; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700;">
+      <div style="width:34px; height:34px; border-radius:50%; background:var(--deep-winter-blue); color:var(--snow-white); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700;">
         RV
       </div>
     </div>
@@ -244,98 +254,110 @@
     <!-- Welcome Greeting Section -->
     <section class="welcome-section">
       <div class="welcome-text">
-        <h1 id="welcome-user">Good Morning, Rahul 👋</h1>
-        <p class="body-text" style="font-size:14px;">Here is your live consultation and appointment status for today.</p>
+        <h1 id="welcome-user">Good Morning, Rahul <i class="fa-solid fa-hand text-small"></i></h1>
+        <p class="body-text" style="font-size:14px;">Real-time synchronized consultation status for today.</p>
       </div>
-      <span class="badge badge-green" style="height:28px;">● Clinic Queue Running Smoothly</span>
+      <span class="badge badge-green" style="height:28px;">
+        <i class="fa-solid fa-circle-check"></i> Clinic Live Queue Running
+      </span>
     </section>
 
     <!-- DYNAMIC HERO CARD: CHANGES BASED ON PATIENT'S ACTIVE LIFECYCLE -->
 
-    <!-- Case A: Patient is IN QUEUE with Token #A-14 -->
+    <!-- Case A: Patient is IN QUEUE with Token #A-17 -->
     <div class="hero-context-card" id="hero-card-in-queue">
       <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
         <div>
-          <span class="badge badge-blue" style="margin-bottom:6px;">LIVE ACTIVE TOKEN</span>
+          <span class="badge badge-blue" style="margin-bottom:6px;">
+            <i class="fa-solid fa-ticket"></i> LIVE ACTIVE TOKEN
+          </span>
           <h2 style="font-size:20px;">You are in Dr. Rajesh Sharma's Queue</h2>
-          <p class="body-text" style="font-size:13px;">Room 102 • General Medicine • Arrived at 11:00 AM</p>
+          <p class="body-text" style="font-size:13px;">Cabin 02 • General Medicine • Arrived at 10:14 AM</p>
         </div>
         <div style="text-align:right;">
-          <div style="font-family:var(--font-heading); font-size:36px; font-weight:700; color:var(--color-secondary-blue);">#A-14</div>
+          <div style="font-family:var(--font-heading); font-size:36px; font-weight:800; color:var(--deep-winter-blue);">#A-17</div>
           <div class="text-small" style="color:var(--color-accent-muted);">Your Token</div>
         </div>
       </div>
 
-      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; background:#F8FAFC; border:1px solid var(--color-border); border-radius:var(--radius-unified); padding:12px; margin-bottom:16px;">
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; background:var(--frost-mist); border:1px solid var(--color-border); border-radius:var(--radius-unified); padding:12px; margin-bottom:16px;">
         <div>
-          <span style="font-size:12px; color:var(--color-accent-muted);">Position:</span><br>
-          <strong style="color:var(--color-accent-black); font-size:15px;">3 Patients Ahead</strong>
+          <span style="font-size:12px; color:var(--color-accent-muted);"><i class="fa-solid fa-users-line"></i> Position:</span><br>
+          <strong style="color:var(--color-accent-black); font-size:15px;">2 Patients Ahead</strong>
         </div>
         <div>
-          <span style="font-size:12px; color:var(--color-accent-muted);">Estimated Wait:</span><br>
-          <strong style="color:var(--color-secondary-blue); font-size:15px;">25 – 35 mins</strong>
+          <span style="font-size:12px; color:var(--color-accent-muted);"><i class="fa-regular fa-clock"></i> Estimated Wait:</span><br>
+          <strong style="color:var(--deep-winter-blue); font-size:15px;">20 – 30 mins</strong>
         </div>
       </div>
 
+      <!-- High-contrast primary CTA: #17345C background with #FFFFFF text -->
       <a href="4-queue.html" class="btn btn-primary btn-block" style="text-decoration:none;">
-        Open Live Queue & ETA Tracker (Screen 4) →
+        <i class="fa-solid fa-users-line"></i> Open Live Queue & Dynamic ETA Tracker (Screen 5) →
       </a>
     </div>
 
-    <!-- Case B: Patient has a Booking today, but hasn't scanned QR yet -->
+    <!-- Case B: Patient has a Booking today, needs QR Check-in -->
     <div class="hero-context-card" id="hero-card-booked" style="display:none;">
       <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
         <div>
-          <span class="badge badge-amber" style="margin-bottom:6px;">TODAY'S APPOINTMENT (#BK-9042)</span>
+          <span class="badge badge-amber" style="margin-bottom:6px;">
+            <i class="fa-solid fa-calendar-check"></i> TODAY'S APPOINTMENT (#BK-9042)
+          </span>
           <h2 style="font-size:20px;">Dr. Rajesh Sharma</h2>
-          <p class="body-text" style="font-size:13px;">Scheduled Slot: <strong>Today at 11:00 AM</strong> (Room 102)</p>
+          <p class="body-text" style="font-size:13px;">Scheduled Slot: <strong>Today at 10:30 AM</strong> (Cabin 02)</p>
         </div>
-        <span class="badge badge-green">Check-In Open (±15m)</span>
+        <span class="badge badge-green">
+          <i class="fa-solid fa-qrcode"></i> Check-In Window Open (±15m)
+        </span>
       </div>
 
       <div class="alert alert-success" style="font-size:13px; margin-bottom:16px;">
-        📍 <strong>You are near the clinic!</strong> Scan the QR code standee at the entrance to receive your live queue token.
+        <i class="fa-solid fa-location-dot"></i> <strong>You have arrived near the clinic!</strong> Scan the entrance QR code to validate physical arrival and mint your live queue token.
       </div>
 
+      <!-- High-contrast CTA -->
       <a href="3-checkin.html" class="btn btn-primary btn-block" style="text-decoration:none;">
-        Scan QR Code to Check In (Screen 3) →
+        <i class="fa-solid fa-qrcode"></i> Scan Clinic QR Code to Check In (Screen 4) →
       </a>
     </div>
 
     <!-- Case C: No Upcoming Visits Scheduled -->
     <div class="hero-context-card" id="hero-card-empty" style="display:none; text-align:center; padding:36px 20px;">
-      <div style="font-size:36px; margin-bottom:8px;">🩺</div>
+      <div style="font-size:36px; margin-bottom:8px; color:var(--deep-winter-blue);">
+        <i class="fa-solid fa-stethoscope"></i>
+      </div>
       <h2 style="font-size:19px; margin-bottom:4px;">No Appointments Scheduled Today</h2>
       <p class="body-text" style="max-width:380px; margin:0 auto 16px; font-size:13px;">
         Need to consult a doctor? Browse available OPD specialists and reserve your appointment slot in seconds.
       </p>
       <a href="2-booking.html" class="btn btn-primary" style="text-decoration:none; display:inline-flex;">
-        Book an Appointment (Screen 2) →
+        <i class="fa-solid fa-calendar-plus"></i> Book an Appointment (Screen 3) →
       </a>
     </div>
 
-    <!-- 4 Quick Actions Grid -->
+    <!-- 4 Quick Actions Grid (shadcn/ui cards) -->
     <section class="action-grid">
       <a href="2-booking.html" class="action-card">
-        <div class="action-icon">📅</div>
+        <div class="action-icon"><i class="fa-solid fa-calendar-plus"></i></div>
         <div class="action-title">Book Visit</div>
         <div class="action-subtitle">Choose doctor & slot</div>
       </a>
 
       <a href="3-checkin.html" class="action-card">
-        <div class="action-icon">📷</div>
+        <div class="action-icon"><i class="fa-solid fa-qrcode"></i></div>
         <div class="action-title">QR Check-in</div>
         <div class="action-subtitle">Scan clinic standee</div>
       </a>
 
       <a href="4-queue.html" class="action-card">
-        <div class="action-icon">🎟️</div>
+        <div class="action-icon"><i class="fa-solid fa-users-line"></i></div>
         <div class="action-title">My Live Token</div>
         <div class="action-subtitle">Track wait & ETA</div>
       </a>
 
       <a href="javascript:alert('Medical records vault is part of Phase 2 (post-MVP).')" class="action-card">
-        <div class="action-icon">📁</div>
+        <div class="action-icon"><i class="fa-solid fa-file-waveform"></i></div>
         <div class="action-title">Past Records</div>
         <div class="action-subtitle">Vitals & history</div>
       </a>
@@ -345,7 +367,7 @@
     <section>
       <div class="section-header">
         <h2>Specialists Available Today</h2>
-        <a href="2-booking.html" style="font-size:13px; color:var(--color-secondary-blue); font-weight:600; text-decoration:none;">
+        <a href="2-booking.html" style="font-size:13px; color:var(--deep-winter-blue); font-weight:600; text-decoration:none;">
           View All Doctors →
         </a>
       </div>
@@ -362,7 +384,7 @@
               <span class="text-small" style="color:var(--color-accent-muted); margin-left:4px;">Avg. 12m</span>
             </div>
           </div>
-          <a href="2-booking.html" class="btn btn-secondary" style="height:36px; padding:0 12px; font-size:12px; text-decoration:none;">
+          <a href="2-booking.html" class="btn btn-secondary" style="height:36px; padding:0 14px; font-size:12px; text-decoration:none;">
             Book
           </a>
         </div>
@@ -374,10 +396,10 @@
             <div class="text-small" style="color:var(--color-accent-muted);">MBBS, DCH • Pediatrics</div>
             <div style="margin-top:6px;">
               <span class="badge badge-blue">● 4 Slots Left</span>
-              <span class="text-small" style="color:var(--color-accent-muted); margin-left:4px;">Room 104</span>
+              <span class="text-small" style="color:var(--color-accent-muted); margin-left:4px;">Cabin 04</span>
             </div>
           </div>
-          <a href="2-booking.html" class="btn btn-secondary" style="height:36px; padding:0 12px; font-size:12px; text-decoration:none;">
+          <a href="2-booking.html" class="btn btn-secondary" style="height:36px; padding:0 14px; font-size:12px; text-decoration:none;">
             Book
           </a>
         </div>
@@ -396,7 +418,7 @@
           <strong>Dr. Rajesh Sharma — Seasonal Viral & Cold</strong><br>
           <span class="text-small" style="color:var(--color-accent-muted);">12 Sep 2026 • Token #A-08 • Vitals: BP 120/80, Sugar 95</span>
         </div>
-        <span class="badge badge-green">✓ Completed</span>
+        <span class="badge badge-green"><i class="fa-solid fa-circle-check"></i> Completed</span>
       </div>
 
       <div class="past-visit-card">
@@ -404,12 +426,33 @@
           <strong>Dr. Priya Patel — Annual Health Checkup</strong><br>
           <span class="text-small" style="color:var(--color-accent-muted);">04 Aug 2026 • Token #B-03 • Completed</span>
         </div>
-        <span class="badge badge-green">✓ Completed</span>
+        <span class="badge badge-green"><i class="fa-solid fa-circle-check"></i> Completed</span>
       </div>
     </section>
 
   </main>
 
   <script src="js/patient-home.js"></script>
+  <script>
+    function toggleTheme() {
+      const isDark = document.body.classList.toggle('dark-mode');
+      if (isDark) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('qureflow-theme', 'dark');
+        document.getElementById('theme-btn').innerHTML = '<i class="fa-solid fa-sun"></i> <span>Light Mode</span>';
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+        localStorage.setItem('qureflow-theme', 'light');
+        document.getElementById('theme-btn').innerHTML = '<i class="fa-solid fa-moon"></i> <span>Dark Mode</span>';
+      }
+    }
+
+    if (localStorage.getItem('qureflow-theme') === 'dark') {
+      document.body.classList.add('dark-mode');
+      document.documentElement.setAttribute('data-theme', 'dark');
+      const btn = document.getElementById('theme-btn');
+      if (btn) btn.innerHTML = '<i class="fa-solid fa-sun"></i> <span>Light Mode</span>';
+    }
+  </script>
 </body>
 </html>

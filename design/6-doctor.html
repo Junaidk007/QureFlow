@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QureFlow — Screen 6: Doctor Consultation & Vitals Desk</title>
+  <title>QureFlow — Screen 7: Doctor Consultation & Vitals Desk</title>
   <link rel="stylesheet" href="css/style.css">
   <style>
-    /* Screen 6 Layout (Doctor Clinical Console) */
+    /* Screen 7 Layout (Doctor Console) */
     .app-header {
       background: var(--color-primary-surface);
       border-bottom: 1px solid var(--color-border);
@@ -25,15 +25,15 @@
     }
 
     .header-logo-icon {
-      width: 28px;
-      height: 28px;
-      background: var(--color-accent-black);
-      color: #FFFFFF;
+      width: 32px;
+      height: 32px;
+      background: var(--deep-winter-blue);
+      color: var(--snow-white);
       border-radius: var(--radius-unified);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 700;
     }
 
@@ -53,9 +53,9 @@
       }
     }
 
-    /* Active Encounter Hero Banner */
+    /* Active Encounter Hero Banner (shadcn/ui card) */
     .encounter-card {
-      background: #FFFFFF;
+      background: var(--color-primary-surface);
       border: 1px solid var(--color-border);
       border-radius: var(--radius-unified);
       padding: var(--space-6);
@@ -87,19 +87,24 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: #F8FAFC;
+      background: var(--frost-mist);
       border: 1px solid var(--color-border);
       padding: 6px 14px;
       border-radius: var(--radius-unified);
       font-family: var(--font-heading);
       font-size: 16px;
       font-weight: 700;
-      color: var(--color-accent-black);
+      color: var(--deep-winter-blue);
+    }
+
+    [data-theme="dark"] .timer-badge {
+      background: #112540;
+      color: var(--snow-white);
     }
 
     /* Quick Vitals Recording Grid */
     .vitals-card {
-      background: #FFFFFF;
+      background: var(--color-primary-surface);
       border: 1px solid var(--color-border);
       border-radius: var(--radius-unified);
       padding: var(--space-6);
@@ -129,63 +134,48 @@
       pointer-events: none;
     }
 
-    /* Up-Next Patient Queue Drawer/Card */
+    /* Up-Next Drawer Card */
     .upnext-card {
-      background: #FFFFFF;
+      background: var(--color-primary-surface);
       border: 1px solid var(--color-border);
       border-radius: var(--radius-unified);
       padding: var(--space-6);
       box-shadow: var(--shadow-card);
+      position: sticky;
+      top: 70px;
     }
 
     .upnext-item {
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
       padding: 12px;
-      border: 1px solid var(--color-border);
       border-radius: var(--radius-unified);
+      border: 1px solid var(--color-border);
       margin-bottom: 8px;
-      background: #FAFAFC;
+      background: var(--color-primary-surface);
       transition: all 0.15s ease;
     }
 
     .upnext-item:hover {
-      background: #F1F5F9;
-      border-color: var(--color-secondary-blue);
+      border-color: var(--deep-winter-blue);
+      background: var(--frost-mist);
     }
 
     .upnext-item.urgent {
-      background: #FFFBEB;
-      border-color: #FDE68A;
+      background: var(--color-warning-bg);
+      border-color: var(--color-warning-border);
     }
 
-    /* Doctor Availability Switcher */
-    .doc-status-toggle {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: #F1F5F9;
-      padding: 4px;
-      border-radius: var(--radius-unified);
-    }
-
-    .doc-status-btn {
-      border: none;
-      background: transparent;
-      padding: 4px 10px;
+    .token-chip {
+      font-family: var(--font-heading);
+      font-size: 13px;
+      font-weight: 700;
+      background: var(--deep-winter-blue);
+      color: var(--snow-white);
+      padding: 4px 8px;
       border-radius: 6px;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--color-accent-muted);
-      cursor: pointer;
-      transition: all 0.15s ease;
-    }
-
-    .doc-status-btn.active {
-      background: #FFFFFF;
-      color: var(--color-accent-black);
-      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+      display: inline-block;
     }
   </style>
 </head>
@@ -195,22 +185,25 @@
   <aside class="state-controller-bar" aria-label="Interactive State Controller">
     <div class="title">
       <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#10B981;"></span>
-      <strong>Screen 6: Doctor Consultation & Vitals Desk</strong>
-      <span class="badge badge-green">Clinical Tier</span>
+      <strong>Screen 7: Doctor Consultation & Vitals Desk</strong>
+      <span class="badge badge-green">Doctor Tier</span>
     </div>
 
     <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
       <div class="pill-group" title="Switch UI Simulation States">
-        <span style="font-size: 11px; color: #94A3B8; padding-left: 6px;">STATE:</span>
-        <button class="state-btn active" id="state-normal-btn" onclick="setDoctorState('normal')">Active Consult</button>
-        <button class="state-btn" id="state-loading-btn" onclick="setDoctorState('loading')">Advancing Queue</button>
-        <button class="state-btn" id="state-empty-btn" onclick="setDoctorState('empty')">Queue Clear</button>
-        <button class="state-btn" id="state-error-btn" onclick="setDoctorState('error')">Sync Error</button>
+        <span style="font-size: 11px; color: var(--icy-steel); padding-left: 6px;">STATE:</span>
+        <button class="state-btn active" id="state-normal-btn" onclick="setDoctorState('normal')">Active Encounter</button>
+        <button class="state-btn" id="state-empty-btn" onclick="setDoctorState('empty')">Queue Clear (Empty)</button>
+        <button class="state-btn" id="state-break-btn" onclick="toggleDoctorBreak()">Toggle Break</button>
       </div>
 
+      <button class="theme-toggle-btn" id="theme-btn" onclick="toggleTheme()" title="Flip Color Ratio for Dark Mode">
+        <i class="fa-solid fa-moon"></i> <span>Dark Mode</span>
+      </button>
+
       <div class="pill-group">
-        <a href="5-reception.html" class="state-btn" style="text-decoration:none;">← Screen 5</a>
-        <a href="1-auth.html" class="state-btn" style="text-decoration:none;">Screen 1 →</a>
+        <a href="5-reception.html" class="state-btn" style="text-decoration:none;"><i class="fa-solid fa-arrow-left"></i> Screen 6</a>
+        <a href="1-auth.html" class="state-btn" style="text-decoration:none;">Sign Out <i class="fa-solid fa-arrow-right-from-bracket"></i></a>
       </div>
     </div>
   </aside>
@@ -220,30 +213,17 @@
     <a href="1-auth.html" class="header-brand">
       <div class="header-logo-icon">Q</div>
       <strong style="font-family: var(--font-heading); font-size: 18px;">QureFlow</strong>
-      <span style="color:var(--color-border); margin:0 4px;">|</span>
-      <span style="font-size: 14px; font-weight: 500; color:var(--color-accent-muted);">Dr. Rajesh Sharma (Room 102)</span>
+      <span class="text-small" style="color:var(--color-accent-muted);">• Doctor Clinical Desk</span>
     </a>
-    
-    <div style="display:flex; align-items:center; gap:12px;">
-      <!-- Doctor Mode Toggle -->
-      <div class="doc-status-toggle">
-        <button class="doc-status-btn active" id="btn-status-active" onclick="toggleDoctorAvailability('ACTIVE')">
-          ● Ready / Active
-        </button>
-        <button class="doc-status-btn" id="btn-status-break" onclick="toggleDoctorAvailability('BREAK')">
-          ☕ 10m Break
-        </button>
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <div class="badge badge-green" id="doctor-online-pill">
+        <i class="fa-solid fa-stethoscope"></i> <span>Dr. Rajesh Sharma • Cabin 02</span>
       </div>
+      <a href="1-auth.html" class="btn btn-secondary" style="height:32px; padding:0 12px; font-size:12px; text-decoration:none;">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+      </a>
     </div>
   </header>
-
-  <!-- Error Alert Banner -->
-  <div id="doctor-error-alert" style="display:none; max-width: 1100px; margin: 16px auto -8px; padding: 0 24px;">
-    <div class="alert alert-error" style="display:flex; justify-content:space-between; align-items:center;">
-      <span>⚠️ Network timeout: Vitals cached locally. Click to retry sync before advancing to the next patient.</span>
-      <button class="btn btn-ghost" style="color:var(--color-error); font-size:12px; height:28px;" onclick="hideDocAlert()">Retry</button>
-    </div>
-  </div>
 
   <!-- Main Viewport Canvas -->
   <main class="doctor-layout">
@@ -251,13 +231,13 @@
     <!-- LEFT COLUMN: Active Encounter & Vitals Entry -->
     <section id="active-encounter-view">
 
-      <!-- Active Patient Card -->
+      <!-- Active Patient Card (shadcn/ui card) -->
       <div class="encounter-card" id="encounter-card">
         <div class="encounter-header">
           <div>
             <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
-              <span class="badge badge-green">IN CONSULTATION (CHECK_UP)</span>
-              <span class="badge" style="background:#F1F5F9; color:#475569;">Booked Visit</span>
+              <span class="badge badge-green"><i class="fa-solid fa-circle-check"></i> IN CONSULTATION (CHECK_UP)</span>
+              <span class="badge" style="background:var(--frost-mist); color:var(--deep-winter-blue); border:1px solid var(--color-border);">Booked Visit</span>
             </div>
             <h1 style="font-size: 26px; margin-bottom: 2px;" id="patient-name-display">Amit Mehra</h1>
             <p class="body-text" style="font-size:13px;" id="patient-meta-display">Male, 34 yrs • ID: #P-8921 • Reason: Seasonal Cough & Fever</p>
@@ -265,48 +245,54 @@
 
           <div style="text-align: right;">
             <div class="text-small" style="color:var(--color-accent-muted); margin-bottom:4px;">TOKEN NUMBER</div>
-            <div style="font-family:var(--font-heading); font-size:32px; font-weight:700; color:var(--color-secondary-blue);" id="patient-token-display">#A-11</div>
+            <div style="font-family:var(--font-heading); font-size:36px; font-weight:800; color:var(--deep-winter-blue);" id="patient-token-display">#A-11</div>
             <div class="timer-badge" id="timer-box">
-              ⏱️ <span id="live-consult-timer">08:42</span>
+              <i class="fa-regular fa-clock"></i> <span id="live-consult-timer">08:42</span>
             </div>
           </div>
         </div>
 
-        <div style="background:#F8FAFC; border-radius:var(--radius-unified); padding:10px 14px; font-size:12px; color:var(--color-accent-muted);">
-          Arrival: 10:48 AM • Scheduled: 10:30 AM • First visit to clinic
+        <div style="background:var(--frost-mist); border-radius:var(--radius-unified); padding:10px 14px; font-size:12px; color:var(--color-accent-muted); border:1px solid var(--color-border);">
+          <i class="fa-solid fa-circle-info"></i> Arrival: 10:14 AM • Scheduled: 10:30 AM • First visit to clinic
         </div>
       </div>
 
-      <!-- Quick Vitals Form -->
+      <!-- Quick Vitals Form (shadcn/ui card) -->
       <div class="vitals-card">
         <h3 style="font-size: 16px; margin-bottom: var(--space-4); display:flex; justify-content:space-between; align-items:center;">
-          <span>Clinical Vitals & Measurements</span>
-          <span class="text-small" style="color:var(--color-secondary-blue);">Recorded into visit record</span>
+          <span><i class="fa-solid fa-heart-pulse" style="color:var(--color-error);"></i> Clinical Vitals & Measurements</span>
+          <span class="text-small" style="color:var(--deep-winter-blue);">Recorded into Visits.vitals</span>
         </h3>
 
         <div class="vitals-grid">
           
-          <!-- Blood Pressure -->
+          <!-- Blood Pressure (vitals.bp) -->
           <div class="form-group" style="margin-bottom:0;">
-            <label class="form-label" for="vit-bp">Blood Pressure</label>
+            <label class="form-label" for="vit-bp">
+              <i class="fa-solid fa-heart-pulse"></i> Blood Pressure
+            </label>
             <div class="input-wrapper">
               <input type="text" id="vit-bp" class="form-input" placeholder="120/80" value="124/82" />
               <span class="vital-unit-addon">mmHg</span>
             </div>
           </div>
 
-          <!-- Blood Sugar -->
+          <!-- Blood Sugar (vitals.sugar) -->
           <div class="form-group" style="margin-bottom:0;">
-            <label class="form-label" for="vit-sugar">Random Blood Sugar</label>
+            <label class="form-label" for="vit-sugar">
+              <i class="fa-solid fa-droplet" style="color:#F59E0B;"></i> Blood Sugar
+            </label>
             <div class="input-wrapper">
               <input type="number" id="vit-sugar" class="form-input" placeholder="100" value="98" />
               <span class="vital-unit-addon">mg/dL</span>
             </div>
           </div>
 
-          <!-- Body Weight -->
+          <!-- Body Weight (vitals.weight) -->
           <div class="form-group" style="margin-bottom:0;">
-            <label class="form-label" for="vit-weight">Body Weight</label>
+            <label class="form-label" for="vit-weight">
+              <i class="fa-solid fa-weight-scale" style="color:var(--deep-winter-blue);"></i> Body Weight
+            </label>
             <div class="input-wrapper">
               <input type="number" id="vit-weight" class="form-input" placeholder="70" value="72.5" />
               <span class="vital-unit-addon">kg</span>
@@ -317,12 +303,15 @@
 
         <!-- Clinical Notes Field -->
         <div class="form-group" style="margin-top:var(--space-4); margin-bottom:var(--space-4);">
-          <label class="form-label" for="vit-notes">Consultation Notes / Diagnosis</label>
+          <label class="form-label" for="vit-notes">
+            <i class="fa-solid fa-clipboard-user"></i> Consultation Notes / Diagnosis
+          </label>
           <textarea id="vit-notes" class="form-input" style="height:72px; padding:10px 14px; resize:none;" placeholder="Enter diagnosis, prescription summary or recommendations...">Acute upper respiratory infection. Advised steam inhalation and paracetamol 650mg SOS.</textarea>
         </div>
 
         <!-- THE ONE PRIMARY ACTION (CTA) -->
         <button id="primary-complete-cta" class="btn btn-primary btn-block" style="height:48px;" onclick="handleCompleteConsultation()">
+          <i class="fa-solid fa-forward-step"></i>
           <span id="complete-cta-text">Complete Consult & Call Next (#A-12) →</span>
         </button>
       </div>
@@ -333,7 +322,7 @@
     <aside>
       <div class="upnext-card">
         <h3 style="font-size: 15px; margin-bottom: var(--space-4); display: flex; justify-content: space-between; align-items: center;">
-          <span>Up Next in Line</span>
+          <span><i class="fa-solid fa-users-line"></i> Up Next in Line</span>
           <span class="badge badge-blue" id="upnext-count">3 Waiting</span>
         </h3>
 
@@ -351,32 +340,34 @@
           <!-- Next Patient 2 (Urgent Triage) -->
           <div class="upnext-item urgent" id="next-2">
             <div>
-              <div style="font-weight: 600; font-size: 14px; color:#B45309;">Karan Johar (Priority)</div>
+              <div style="font-weight: 600; font-size: 14px; color:#B45309;"><i class="fa-solid fa-triangle-exclamation"></i> Karan Johar</div>
               <div class="text-small" style="color:#B45309;">High Fever • Urgent Walk-in</div>
             </div>
             <span class="token-chip" style="background:#DC2626; font-size:12px;">#A-13</span>
           </div>
 
-          <!-- Next Patient 3 (Screen 4 User) -->
+          <!-- Next Patient 3 -->
           <div class="upnext-item" id="next-3">
             <div>
               <div style="font-weight: 600; font-size: 14px;">Rahul Verma</div>
-              <div class="text-small" style="color:var(--color-accent-muted);">Booked • Slot: 11:00 AM</div>
+              <div class="text-small" style="color:var(--color-accent-muted);">Booked • Slot: 10:30 AM</div>
             </div>
-            <span class="token-chip" style="background:var(--color-secondary-blue); font-size:12px;">#A-14</span>
+            <span class="token-chip" style="background:var(--deep-winter-blue); font-size:12px;">#A-14</span>
           </div>
 
         </div>
 
         <div style="margin-top: var(--space-4); padding-top: var(--space-3); border-top: 1px solid var(--color-border); font-size: 12px; color: var(--color-accent-muted); line-height: 1.4;">
-          ⚡ Completing this visit updates the live ETA and triggers WebSocket notifications for all queued patients.
+          <i class="fa-solid fa-bolt" style="color:var(--deep-winter-blue);"></i> Completing this visit moves patient to <code>DONE</code>, recalculates dynamic ETAs, and triggers WebSocket events for all waiting patients.
         </div>
       </div>
     </aside>
 
     <!-- ZERO / EMPTY STATE (Queue Clear) -->
     <div id="empty-doctor-view" class="card" style="display:none; text-align:center; padding: 64px 24px; grid-column: 1 / -1;">
-      <div style="font-size: 40px; margin-bottom: 12px;">🎉</div>
+      <div style="font-size: 40px; margin-bottom: 12px; color:var(--color-success);">
+        <i class="fa-solid fa-circle-check"></i>
+      </div>
       <h2 style="font-size: 22px; margin-bottom: 6px;">Queue is Completely Clear!</h2>
       <p class="body-text" style="max-width: 440px; margin: 0 auto 20px;">
         All scheduled and walk-in patients for today's OPD have been seen. New check-ins at reception will alert you automatically.
@@ -389,5 +380,26 @@
   </main>
 
   <script src="js/6-doctor.js"></script>
+  <script>
+    function toggleTheme() {
+      const isDark = document.body.classList.toggle('dark-mode');
+      if (isDark) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('qureflow-theme', 'dark');
+        document.getElementById('theme-btn').innerHTML = '<i class="fa-solid fa-sun"></i> <span>Light Mode</span>';
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+        localStorage.setItem('qureflow-theme', 'light');
+        document.getElementById('theme-btn').innerHTML = '<i class="fa-solid fa-moon"></i> <span>Dark Mode</span>';
+      }
+    }
+
+    if (localStorage.getItem('qureflow-theme') === 'dark') {
+      document.body.classList.add('dark-mode');
+      document.documentElement.setAttribute('data-theme', 'dark');
+      const btn = document.getElementById('theme-btn');
+      if (btn) btn.innerHTML = '<i class="fa-solid fa-sun"></i> <span>Light Mode</span>';
+    }
+  </script>
 </body>
 </html>

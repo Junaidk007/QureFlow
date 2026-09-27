@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QureFlow — Screen 4: Live Queue & ETA Tracker</title>
+  <title>QureFlow — Screen 5: Patient Live Queue & Dynamic ETA Tracker</title>
   <link rel="stylesheet" href="css/style.css">
   <style>
-    /* Screen 4 Layout */
+    /* Screen 5 Layout */
     .app-header {
       background: var(--color-primary-surface);
       border-bottom: 1px solid var(--color-border);
@@ -25,15 +25,15 @@
     }
 
     .header-logo-icon {
-      width: 28px;
-      height: 28px;
-      background: var(--color-accent-black);
-      color: #FFFFFF;
+      width: 32px;
+      height: 32px;
+      background: var(--deep-winter-blue);
+      color: var(--snow-white);
       border-radius: var(--radius-unified);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 700;
     }
 
@@ -70,7 +70,7 @@
       padding: var(--space-6) var(--space-4) 80px;
     }
 
-    /* Token Hero Card */
+    /* Token Hero Card (shadcn/ui card) */
     .token-hero-card {
       background: var(--color-primary-surface);
       border: 1px solid var(--color-border);
@@ -90,7 +90,7 @@
       left: 0;
       right: 0;
       height: 4px;
-      background: var(--color-secondary-blue);
+      background: var(--deep-winter-blue);
     }
 
     .token-label {
@@ -105,11 +105,15 @@
     .token-display {
       font-family: var(--font-heading);
       font-size: 56px;
-      font-weight: 700;
-      color: var(--color-accent-black);
+      font-weight: 800;
+      color: var(--deep-winter-blue);
       line-height: 1.1;
       margin-bottom: 8px;
       letter-spacing: -0.02em;
+    }
+
+    [data-theme="dark"] .token-display {
+      color: var(--snow-white);
     }
 
     /* 3-Metrics Grid */
@@ -121,7 +125,7 @@
     }
 
     .metric-card {
-      background: #FFFFFF;
+      background: var(--color-primary-surface);
       border: 1px solid var(--color-border);
       border-radius: var(--radius-unified);
       padding: 16px 12px;
@@ -131,7 +135,7 @@
 
     .metric-val {
       font-family: var(--font-heading);
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 700;
       color: var(--color-accent-black);
       line-height: 1.2;
@@ -148,7 +152,7 @@
 
     /* Stepper Progress Bar */
     .stepper-card {
-      background: #FFFFFF;
+      background: var(--color-primary-surface);
       border: 1px solid var(--color-border);
       border-radius: var(--radius-unified);
       padding: var(--space-6) var(--space-4);
@@ -180,7 +184,7 @@
       left: 10px;
       width: 50%;
       height: 2px;
-      background: var(--color-secondary-blue);
+      background: var(--deep-winter-blue);
       z-index: 2;
       transition: width 0.3s ease;
     }
@@ -199,7 +203,7 @@
       width: 30px;
       height: 30px;
       border-radius: 50%;
-      background: #FFFFFF;
+      background: var(--color-primary-surface);
       border: 2px solid var(--color-border);
       display: flex;
       align-items: center;
@@ -213,14 +217,21 @@
     .step-item.completed .step-node {
       background: var(--color-success);
       border-color: var(--color-success);
-      color: #FFFFFF;
+      color: var(--snow-white);
     }
 
     .step-item.active .step-node {
-      background: var(--color-secondary-blue);
-      border-color: var(--color-secondary-blue);
-      color: #FFFFFF;
-      box-shadow: 0 0 0 4px var(--color-secondary-light);
+      background: var(--deep-winter-blue);
+      border-color: var(--deep-winter-blue);
+      color: var(--snow-white);
+      box-shadow: 0 0 0 4px var(--frost-mist);
+    }
+
+    [data-theme="dark"] .step-item.active .step-node {
+      background: var(--icy-steel);
+      border-color: var(--icy-steel);
+      color: var(--frost-navy);
+      box-shadow: 0 0 0 4px rgba(157, 183, 213, 0.25);
     }
 
     .step-label {
@@ -231,13 +242,13 @@
     }
 
     .step-item.active .step-label {
-      color: var(--color-secondary-blue);
+      color: var(--deep-winter-blue);
       font-weight: 700;
     }
 
     /* Doctor Live Activity Status Box */
     .doctor-live-card {
-      background: #F8FAFC;
+      background: var(--frost-mist);
       border: 1px solid var(--color-border);
       border-radius: var(--radius-unified);
       padding: var(--space-4);
@@ -247,11 +258,15 @@
       margin-bottom: var(--space-6);
     }
 
+    [data-theme="dark"] .doctor-live-card {
+      background: #112540;
+    }
+
     /* Full-screen Turn Alert Notification Modal */
     .turn-modal-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(15, 23, 42, 0.8);
+      background: rgba(7, 22, 41, 0.85);
       backdrop-filter: blur(8px);
       z-index: 3000;
       display: flex;
@@ -261,43 +276,20 @@
     }
 
     .turn-modal-card {
-      background: #FFFFFF;
+      background: var(--color-primary-surface);
+      border: 1px solid var(--color-border);
       border-radius: var(--radius-unified);
       max-width: 440px;
       width: 100%;
-      padding: 32px 24px;
+      padding: var(--space-6);
       text-align: center;
-      box-shadow: var(--shadow-elevated);
-      animation: alertBounce 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: var(--shadow-modal);
+      animation: modalPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    @keyframes alertBounce {
-      0% { transform: scale(0.85); opacity: 0; }
+    @keyframes modalPop {
+      0% { transform: scale(0.9); opacity: 0; }
       100% { transform: scale(1); opacity: 1; }
-    }
-
-    .bell-ring {
-      width: 72px;
-      height: 72px;
-      border-radius: 50%;
-      background: var(--color-secondary-light);
-      color: var(--color-secondary-blue);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 36px;
-      margin: 0 auto 16px;
-      box-shadow: 0 0 0 8px rgba(37, 99, 235, 0.1);
-      animation: ring 1.5s infinite ease-in-out;
-    }
-
-    @keyframes ring {
-      0%, 100% { transform: rotate(0); }
-      15% { transform: rotate(14deg); }
-      30% { transform: rotate(-14deg); }
-      45% { transform: rotate(8deg); }
-      60% { transform: rotate(-4deg); }
-      75% { transform: rotate(0); }
     }
   </style>
 </head>
@@ -307,197 +299,221 @@
   <aside class="state-controller-bar" aria-label="Interactive State Controller">
     <div class="title">
       <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#10B981;"></span>
-      <strong>Screen 4: Patient Live Queue & ETA Tracker</strong>
+      <strong>Screen 5: Patient Live Queue & Dynamic ETA Tracker</strong>
       <span class="badge badge-blue">Patient Tier</span>
     </div>
 
     <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
       <div class="pill-group" title="Switch UI Simulation States">
-        <span style="font-size: 11px; color: #94A3B8; padding-left: 6px;">STATE:</span>
-        <button class="state-btn active" id="state-normal-btn" onclick="setQueueState('normal')">Live Synchronized</button>
-        <button class="state-btn" id="state-loading-btn" onclick="setQueueState('loading')">Reconnecting</button>
-        <button class="state-btn" id="state-empty-btn" onclick="setQueueState('empty')">Empty (No Token)</button>
-        <button class="state-btn" id="state-error-btn" onclick="setQueueState('error')">Error (Offline)</button>
-        <button class="state-btn" id="state-success-btn" onclick="setQueueState('success')">Doctor Called (Turn!)</button>
+        <span style="font-size: 11px; color: var(--icy-steel); padding-left: 6px;">QUEUE STATE:</span>
+        <button class="state-btn active" id="btn-state-inqueue" onclick="setQueueLifecycleState('in_queue')">In Queue (Waiting)</button>
+        <button class="state-btn" id="btn-state-next" onclick="setQueueLifecycleState('next')">You're Next!</button>
+        <button class="state-btn" id="btn-state-turn" onclick="setQueueLifecycleState('turn')">It's Your Turn</button>
+        <button class="state-btn" id="btn-state-done" onclick="setQueueLifecycleState('done')">Completed (Done)</button>
+        <button class="state-btn" id="btn-state-break" onclick="toggleDoctorBreak()">Doctor Break</button>
       </div>
 
+      <button class="theme-toggle-btn" id="theme-btn" onclick="toggleTheme()" title="Flip Color Ratio for Dark Mode">
+        <i class="fa-solid fa-moon"></i> <span>Dark Mode</span>
+      </button>
+
       <div class="pill-group">
-        <a href="3-checkin.html" class="state-btn" style="text-decoration:none;">← Screen 3</a>
-        <a href="5-reception.html" class="state-btn" style="text-decoration:none;">Screen 5 →</a>
+        <a href="patient-home.html" class="state-btn" style="text-decoration:none;"><i class="fa-solid fa-arrow-left"></i> Home</a>
+        <a href="index.html" class="state-btn" style="text-decoration:none;">Gallery Hub <i class="fa-solid fa-table-cells-large"></i></a>
       </div>
     </div>
   </aside>
 
   <!-- App Header -->
   <header class="app-header">
-    <a href="1-auth.html" class="header-brand">
+    <a href="patient-home.html" class="header-brand">
       <div class="header-logo-icon">Q</div>
       <strong style="font-family: var(--font-heading); font-size: 18px;">QureFlow</strong>
     </a>
-    <div class="live-indicator" id="live-indicator">
-      <span class="pulse-dot"></span>
-      <span id="live-sync-text">Live Sync Active</span>
+    <div class="live-indicator">
+      <div class="pulse-dot"></div>
+      <span>WebSocket Sync Active</span>
     </div>
   </header>
-
-  <!-- Offline Disconnection Alert Banner -->
-  <div id="queue-offline-alert" style="display:none; max-width: 640px; margin: 16px auto -8px; padding: 0 16px;">
-    <div class="alert alert-error" style="display:flex; justify-content:space-between; align-items:center;">
-      <span>⚠️ Live sync disconnected. Displaying cached queue position.</span>
-      <button class="btn btn-ghost" style="height:32px; padding:0 8px; font-size:12px; color:var(--color-error);" onclick="triggerRefresh()">
-        Retry
-      </button>
-    </div>
-  </div>
 
   <!-- Main Viewport Canvas -->
   <main class="queue-container">
 
-    <!-- ACTIVE QUEUE VIEWPORT -->
-    <div id="active-queue-view">
-
-      <!-- Hero Token Card -->
-      <section class="token-hero-card">
-        <div class="token-label">Your Live Visit Token</div>
-        <div class="token-display" id="hero-token-id">#A-14</div>
-        <div style="display:flex; justify-content:center; gap:8px;">
-          <span class="badge badge-blue" id="hero-status-pill">● Status: In Live Queue</span>
-          <span class="badge" style="background:#F1F5F9; color:#475569;">Room 102 • Ground Floor</span>
-        </div>
-      </section>
-
-      <!-- 3 Real-Time Key Metrics -->
-      <section class="metrics-grid">
-        <div class="metric-card">
-          <div class="metric-val" id="metric-ahead" style="color:var(--color-secondary-blue);">3</div>
-          <div class="metric-title">Patients Ahead</div>
-        </div>
-
-        <div class="metric-card">
-          <div class="metric-val" id="metric-eta" style="font-size:20px; color:var(--color-accent-black);">25–35m</div>
-          <div class="metric-title">Estimated Wait</div>
-        </div>
-
-        <div class="metric-card">
-          <div class="metric-val" id="metric-serving" style="color:var(--color-accent-muted);">#A-11</div>
-          <div class="metric-title">Serving Now</div>
-        </div>
-      </section>
-
-      <!-- 5-State Stepper Progress Bar -->
-      <section class="stepper-card">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
-          <span class="form-label" style="font-size:12px; text-transform:uppercase; letter-spacing:0.04em;">Consultation Lifecycle</span>
-          <span class="text-small" style="color:var(--color-secondary-blue); font-weight:600;" id="stepper-percentage">Step 3 of 5</span>
-        </div>
-
-        <div class="stepper-track">
-          <div class="stepper-line"></div>
-          <div class="stepper-line-fill" id="stepper-line-fill" style="width: 50%;"></div>
-
-          <!-- Step 1 -->
-          <div class="step-item completed" id="step-1">
-            <div class="step-node">✓</div>
-            <div class="step-label">Booked</div>
-          </div>
-
-          <!-- Step 2 -->
-          <div class="step-item completed" id="step-2">
-            <div class="step-node">✓</div>
-            <div class="step-label">Checked-In</div>
-          </div>
-
-          <!-- Step 3 -->
-          <div class="step-item active" id="step-3">
-            <div class="step-node">3</div>
-            <div class="step-label">In Queue</div>
-          </div>
-
-          <!-- Step 4 -->
-          <div class="step-item" id="step-4">
-            <div class="step-node">4</div>
-            <div class="step-label">Consulting</div>
-          </div>
-
-          <!-- Step 5 -->
-          <div class="step-item" id="step-5">
-            <div class="step-node">5</div>
-            <div class="step-label">Done</div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Doctor Live Activity Card -->
-      <section class="doctor-live-card">
-        <div style="display:flex; align-items:center; gap:12px;">
-          <div style="font-size: 28px;">👨‍⚕️</div>
-          <div>
-            <div style="font-size:14px; font-weight:600; color:var(--color-accent-black);">Dr. Rajesh Sharma</div>
-            <div style="font-size:12px; color:var(--color-accent-muted);">
-              Currently consulting Token <strong id="doc-active-token">#A-11</strong> (<span id="consult-timer">08:42</span> elapsed)
-            </div>
-          </div>
-        </div>
-        <span class="badge badge-green" id="doctor-state-badge">● Active</span>
-      </section>
-
-      <!-- Dynamic ETA Breakdown Note -->
-      <div style="background:#FFFFFF; border: 1px solid var(--color-border); border-radius: var(--radius-unified); padding: 14px; font-size: 12px; color: var(--color-accent-muted); line-height: 1.5; margin-bottom: var(--space-6);">
-        📊 <strong>How ETA is calculated:</strong> Wait time is an elastic range calculated from Dr. Sharma's rolling average consult speed (12 mins) across the 3 patients physically ahead of you.
+    <!-- 1. Active Token Hero Display (shadcn/ui card) -->
+    <section class="token-hero-card">
+      <div class="token-label"><i class="fa-solid fa-ticket"></i> YOUR VISIT TOKEN</div>
+      <div class="token-display" id="hero-token-num">#A-17</div>
+      <div style="display:flex; justify-content:center; gap:8px;">
+        <span class="badge badge-blue" id="token-status-badge">
+          <i class="fa-solid fa-circle-dot"></i> IN PHYSICAL QUEUE
+        </span>
+        <span class="badge" style="background:var(--frost-mist); color:var(--deep-winter-blue); border:1px solid var(--color-border);">
+          Cabin 02 • Ground Floor
+        </span>
       </div>
+    </section>
 
-      <!-- THE ONE PRIMARY ACTION (CTA) -->
-      <button id="primary-refresh-cta" class="btn btn-primary btn-block" style="margin-bottom: var(--space-4);" onclick="triggerRefresh()">
-        <span id="refresh-cta-text">Refresh Live Status</span>
-      </button>
-
-      <!-- Secondary Action: Leave Queue / Cancel -->
-      <div style="text-align: center;">
-        <button class="btn btn-ghost" style="color:var(--color-error); font-size:13px;" onclick="cancelVisit()">
-          Leave Queue / Cancel Visit
-        </button>
+    <!-- 2. Proximity Alert Banner (Shown when patientsAhead <= 1) -->
+    <div id="proximity-alert" style="display: none; margin-bottom: var(--space-4);">
+      <div class="alert alert-warning" style="font-weight: 600;">
+        <i class="fa-solid fa-bell fa-shake"></i> You're Next! Please remain near Cabin 02 entrance door.
       </div>
-
     </div>
 
-    <!-- ZERO / EMPTY STATE (Hidden by default) -->
-    <div id="empty-queue-view" class="card" style="display:none; text-align:center; padding: 48px 24px;">
-      <div style="font-size: 40px; margin-bottom: 12px;">🎟️</div>
-      <h3 style="font-size: 18px; margin-bottom: 6px;">No Active Queue Token</h3>
-      <p class="body-text" style="max-width: 360px; margin: 0 auto 20px;">
-        You do not have a live token in the clinic queue today. Please arrive at the clinic and scan the QR standee to receive your token.
-      </p>
-      <a href="3-checkin.html" class="btn btn-primary" style="text-decoration:none;">
-        Scan QR to Check In (Screen 3)
-      </a>
+    <!-- 3. Real-Time 3-Metrics Grid -->
+    <section class="metrics-grid">
+      <!-- Metric 1: Patients Ahead -->
+      <div class="metric-card">
+        <div class="metric-val" id="metric-ahead">2</div>
+        <div class="metric-title"><i class="fa-solid fa-users-line"></i> Patients Ahead</div>
+      </div>
+
+      <!-- Metric 2: Dynamic ETA Range -->
+      <div class="metric-card">
+        <div class="metric-val" id="metric-eta" style="color:var(--deep-winter-blue);">20–30m</div>
+        <div class="metric-title"><i class="fa-regular fa-clock"></i> Est. Wait Range</div>
+      </div>
+
+      <!-- Metric 3: Currently Serving -->
+      <div class="metric-card">
+        <div class="metric-val" id="metric-serving" style="color:var(--color-success);">#A-15</div>
+        <div class="metric-title"><i class="fa-solid fa-stethoscope"></i> Now Serving</div>
+      </div>
+    </section>
+
+    <!-- 4. Consultation Lifecycle Stepper (shadcn/ui card) -->
+    <section class="stepper-card">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3 style="font-size:14px; font-weight:600;"><i class="fa-solid fa-list-check"></i> Consultation Lifecycle</h3>
+        <span class="text-small" style="color:var(--color-accent-muted);">Step 3 of 5</span>
+      </div>
+
+      <div class="stepper-track">
+        <div class="stepper-line"></div>
+        <div class="stepper-line-fill" id="stepper-progress-fill"></div>
+
+        <!-- Step 1: Booked -->
+        <div class="step-item completed" id="step-1">
+          <div class="step-node"><i class="fa-solid fa-check"></i></div>
+          <div class="step-label">Booked</div>
+        </div>
+
+        <!-- Step 2: Checked In -->
+        <div class="step-item completed" id="step-2">
+          <div class="step-node"><i class="fa-solid fa-check"></i></div>
+          <div class="step-label">Checked In</div>
+        </div>
+
+        <!-- Step 3: In Queue -->
+        <div class="step-item active" id="step-3">
+          <div class="step-node"><i class="fa-solid fa-hourglass-half"></i></div>
+          <div class="step-label">In Queue</div>
+        </div>
+
+        <!-- Step 4: Check Up -->
+        <div class="step-item" id="step-4">
+          <div class="step-node"><i class="fa-solid fa-user-doctor"></i></div>
+          <div class="step-label">Consulting</div>
+        </div>
+
+        <!-- Step 5: Done -->
+        <div class="step-item" id="step-5">
+          <div class="step-node"><i class="fa-solid fa-flag-checkered"></i></div>
+          <div class="step-label">Completed</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Doctor Live Activity Box -->
+    <section class="doctor-live-card">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div style="width:40px; height:40px; border-radius:var(--radius-unified); background:var(--color-primary-surface); border:1px solid var(--color-border); display:flex; align-items:center; justify-content:center; color:var(--deep-winter-blue); font-size:18px;">
+          <i class="fa-solid fa-user-doctor"></i>
+        </div>
+        <div>
+          <div style="font-weight:700; font-size:14px;">Dr. Rajesh Sharma</div>
+          <div class="text-small" style="color:var(--color-accent-muted);">General Medicine • Cabin 02</div>
+        </div>
+      </div>
+
+      <div id="doctor-status-pill">
+        <span class="badge badge-green">
+          <i class="fa-solid fa-circle-check"></i> Consulting (#A-15)
+        </span>
+      </div>
+    </section>
+
+    <!-- 6. High-Contrast Primary CTA -->
+    <button class="btn btn-primary btn-block" style="margin-bottom: var(--space-4);" onclick="manualRefreshStatus()">
+      <i class="fa-solid fa-arrows-rotate"></i>
+      <span>Refresh Live Status</span>
+    </button>
+
+    <!-- Secondary Ghost Action -->
+    <div style="text-align: center;">
+      <button class="btn btn-ghost" style="font-size:12px; color:var(--color-error);" onclick="confirmCancelQueue()">
+        <i class="fa-solid fa-person-walking-arrow-right"></i> Leave Queue / Cancel Visit
+      </button>
     </div>
 
   </main>
 
-  <!-- SUCCESS EVENT: DOCTOR CALLED YOUR TOKEN MODAL -->
-  <div class="turn-modal-overlay" id="turn-alert-modal" style="display:none;">
+  <!-- FULLSCREEN TURN ALERT MODAL (Triggered when doctor advances queue) -->
+  <div class="turn-modal-overlay" id="turn-alert-modal" style="display: none;">
     <div class="turn-modal-card">
-      <div class="bell-ring">🔔</div>
-      <span class="badge badge-green" style="margin-bottom: 10px;">NOW CALLING</span>
-      <h2 style="font-size: 24px; margin-bottom: 4px;">It's Your Turn!</h2>
-      <p class="body-text" style="font-size: 14px; margin-bottom: 16px;">
-        Dr. Rajesh Sharma is ready for you in <strong>Room 102</strong>.
+      <div style="width: 64px; height: 64px; border-radius: 50%; background: var(--frost-mist); color: var(--deep-winter-blue); font-size: 28px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+        <i class="fa-solid fa-bell fa-bounce"></i>
+      </div>
+      <span class="badge badge-green" style="margin-bottom: 8px;">
+        <i class="fa-solid fa-door-open"></i> DOCTOR IS READY
+      </span>
+      <h2 style="font-size: 24px; margin-bottom: 6px;">It's Your Turn!</h2>
+      <p class="body-text" style="font-size: 14px; margin-bottom: 20px;">
+        Token <strong style="color:var(--deep-winter-blue); font-size:18px;">#A-17</strong>: Please proceed directly inside <strong>Cabin 02</strong> for Dr. Rajesh Sharma.
       </p>
 
-      <div style="background:var(--color-primary-bg); border: 1px solid var(--color-border); border-radius: var(--radius-unified); padding: 12px; margin-bottom: 20px;">
-        <div style="font-size: 12px; color: var(--color-accent-muted);">Your Token</div>
-        <div style="font-family: var(--font-heading); font-size: 32px; font-weight: 700; color: var(--color-secondary-blue);">#A-14</div>
+      <div style="background: var(--frost-mist); border: 1px solid var(--color-border); border-radius: var(--radius-unified); padding: 12px; font-size: 13px; text-align: left; margin-bottom: 20px;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+          <span style="color:var(--color-accent-muted);">Doctor:</span>
+          <strong>Dr. Rajesh Sharma</strong>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+          <span style="color:var(--color-accent-muted);">Cabin:</span>
+          <strong>Cabin 02 (Ground Floor)</strong>
+        </div>
+        <div style="display:flex; justify-content:space-between;">
+          <span style="color:var(--color-accent-muted);">Status:</span>
+          <span class="badge badge-green">Consultation Starting</span>
+        </div>
       </div>
 
-      <button class="btn btn-primary btn-block" style="margin-bottom: 8px;" onclick="acknowledgeTurn()">
-        I'm Entering Consultation Room →
-      </button>
-      <button class="btn btn-ghost btn-block" onclick="dismissTurnModal()">
-        Dismiss Alert
+      <button class="btn btn-primary btn-block" onclick="dismissTurnModal()">
+        <i class="fa-solid fa-person-walking"></i> Proceeding to Cabin 02
       </button>
     </div>
   </div>
 
   <script src="js/4-queue.js"></script>
+  <script>
+    function toggleTheme() {
+      const isDark = document.body.classList.toggle('dark-mode');
+      if (isDark) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('qureflow-theme', 'dark');
+        document.getElementById('theme-btn').innerHTML = '<i class="fa-solid fa-sun"></i> <span>Light Mode</span>';
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+        localStorage.setItem('qureflow-theme', 'light');
+        document.getElementById('theme-btn').innerHTML = '<i class="fa-solid fa-moon"></i> <span>Dark Mode</span>';
+      }
+    }
+
+    if (localStorage.getItem('qureflow-theme') === 'dark') {
+      document.body.classList.add('dark-mode');
+      document.documentElement.setAttribute('data-theme', 'dark');
+      const btn = document.getElementById('theme-btn');
+      if (btn) btn.innerHTML = '<i class="fa-solid fa-sun"></i> <span>Light Mode</span>';
+    }
+  </script>
 </body>
 </html>
