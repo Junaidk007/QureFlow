@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -50,6 +50,19 @@ export default function ReceptionPage() {
   const [submittingWalkIn, setSubmittingWalkIn] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
+  // OPD Check-in Window State
+  const [checkInWindow, setCheckInWindow] = useState({
+    startTime: '09:00',
+    endTime: '12:00',
+  });
+  const [isEditingWindow, setIsEditingWindow] = useState(false);
+  const [windowForm, setWindowForm] = useState({
+    startTime: '09:00',
+    endTime: '12:00',
+  });
+  const [savingWindow, setSavingWindow] = useState(false);
+  const [windowSuccessMsg, setWindowSuccessMsg] = useState('');
+
   const clinicId = user?.clinicId?._id || user?.clinicId;
 
   // Fetch visits and KPIs
@@ -58,19 +71,31 @@ export default function ReceptionPage() {
       const todayStr = new Date().toISOString().split('T')[0];
       const docQuery = selectedDoctorFilter !== 'ALL' ? `&doctorId=${selectedDoctorFilter}` : '';
 
-      const [visitsRes, kpiRes, doctorsRes] = await Promise.all([
+      const promises = [
         api.get(`/visits?clinicId=${clinicId}&date=${todayStr}${docQuery}`),
         api.get(`/visits/reception-kpi?clinicId=${clinicId}&date=${todayStr}`),
         api.get('/doctors/active'),
-      ]);
+      ];
 
-      if (visitsRes.data) setVisits(visitsRes.data);
-      if (kpiRes.data) setKpi(kpiRes.data);
-      if (doctorsRes.data) {
+      if (clinicId) {
+        promises.push(api.get(`/clinics/${clinicId}`).catch(() => null));
+      }
+
+      const [visitsRes, kpiRes, doctorsRes, clinicRes] = await Promise.all(promises);
+
+      if (visitsRes?.data) setVisits(visitsRes.data);
+      if (kpiRes?.data) setKpi(kpiRes.data);
+      if (doctorsRes?.data) {
         setDoctors(doctorsRes.data);
         if (!walkInForm.doctorId && doctorsRes.data.length > 0) {
           setWalkInForm((prev) => ({ ...prev, doctorId: doctorsRes.data[0]._id }));
         }
+      }
+      if (clinicRes?.data) {
+        const start = clinicRes.data.checkInStartTime || '09:00';
+        const end = clinicRes.data.checkInEndTime || '12:00';
+        setCheckInWindow({ startTime: start, endTime: end });
+        setWindowForm({ startTime: start, endTime: end });
       }
     } catch (err) {
       console.error('Failed to load reception data:', err);
@@ -83,6 +108,34 @@ export default function ReceptionPage() {
     fetchData();
   }, [fetchData]);
 
+  // Handle saving clinic check-in window
+  const handleSaveWindow = async (e) => {
+    e.preventDefault();
+    if (!clinicId) return;
+    setSavingWindow(true);
+    setWindowSuccessMsg('');
+
+    try {
+      const res = await api.put(`/clinics/${clinicId}/checkin-window`, {
+        checkInStartTime: windowForm.startTime,
+        checkInEndTime: windowForm.endTime,
+      });
+
+      const updated = {
+        startTime: res.data.checkInStartTime,
+        endTime: res.data.checkInEndTime,
+      };
+      setCheckInWindow(updated);
+      setIsEditingWindow(false);
+      setWindowSuccessMsg(`Check-in window updated to ${updated.startTime} – ${updated.endTime}`);
+      setTimeout(() => setWindowSuccessMsg(''), 4000);
+    } catch (err) {
+      alert(err.message || 'Failed to update check-in window.');
+    } finally {
+      setSavingWindow(false);
+    }
+  };
+
   // Real-time WebSocket synchronization
   const handleWsEvent = useCallback(
     (event) => {
@@ -93,7 +146,7 @@ export default function ReceptionPage() {
     [fetchData]
   );
 
-  const rooms = clinicId ? [`clinic:${clinicId}`] : [];
+  const rooms = useMemo(() => (clinicId ? [`clinic:${clinicId}`] : []), [clinicId]);
   const { isConnected } = useWebSocket(rooms, handleWsEvent);
 
   // Status update (No-show, Cancel)
@@ -218,6 +271,111 @@ export default function ReceptionPage() {
               {kpi.noShows}
             </div>
             <span className="stat-card-sub">Slots released</span>
+          </div>
+        </section>
+
+        {/* OPD Check-in Window Configuration Bar */}
+        <section
+          className="card"
+          style={{
+            marginBottom: 20,
+            padding: '14px 20px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: 12,
+            background: 'var(--surface)',
+            borderLeft: '4px solid var(--deep-winter-blue)',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div
+              style={{
+                width: 38,
+                height: 38,
+                borderRadius: 'var(--radius)',
+                background: 'var(--frost-mist)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'var(--deep-winter-blue)',
+              }}
+            >
+              <Clock size={18} />
+            </div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                <strong style={{ fontSize: 14 }}>OPD Check-In Duration:</strong>
+                <span className="badge badge-blue" style={{ fontSize: 13, fontWeight: 700 }}>
+                  {checkInWindow.startTime} – {checkInWindow.endTime}
+                </span>
+                {windowSuccessMsg && (
+                  <span style={{ fontSize: 12, color: '#047857', fontWeight: 600 }}>
+                    ✓ {windowSuccessMsg}
+                  </span>
+                )}
+              </div>
+              <p style={{ margin: '2px 0 0', fontSize: 12, color: 'var(--muted-foreground)' }}>
+                Patients must check in between these hours at the clinic OPD, else their appointment will be marked invalid.
+              </p>
+            </div>
+          </div>
+
+          <div>
+            {!isEditingWindow ? (
+              <button
+                type="button"
+                className="btn btn-outline btn-sm"
+                onClick={() => setIsEditingWindow(true)}
+              >
+                Set Check-In Hours
+              </button>
+            ) : (
+              <form onSubmit={handleSaveWindow} style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <label style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>Start:</label>
+                  <input
+                    type="time"
+                    className="form-input"
+                    style={{ width: 110, height: 32, fontSize: 12 }}
+                    value={windowForm.startTime}
+                    onChange={(e) => setWindowForm((prev) => ({ ...prev, startTime: e.target.value }))}
+                    required
+                  />
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <label style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>End:</label>
+                  <input
+                    type="time"
+                    className="form-input"
+                    style={{ width: 110, height: 32, fontSize: 12 }}
+                    value={windowForm.endTime}
+                    onChange={(e) => setWindowForm((prev) => ({ ...prev, endTime: e.target.value }))}
+                    required
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="btn btn-primary btn-sm"
+                  style={{ height: 32, padding: '0 12px' }}
+                  disabled={savingWindow}
+                >
+                  {savingWindow ? 'Saving...' : 'Save'}
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-outline btn-sm"
+                  style={{ height: 32, padding: '0 10px' }}
+                  onClick={() => {
+                    setIsEditingWindow(false);
+                    setWindowForm(checkInWindow);
+                  }}
+                >
+                  Cancel
+                </button>
+              </form>
+            )}
           </div>
         </section>
 

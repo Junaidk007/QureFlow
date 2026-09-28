@@ -204,3 +204,46 @@
   padding: 28px;
   background-color: var(--surface);
 }
+
+/* Mobile Responsive Adjustments */
+@media (max-width: 768px) {
+  .reception-header {
+    padding: 8px 14px;
+    height: auto;
+    min-height: 56px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .reception-content-wrapper {
+    padding: 16px 12px 60px;
+  }
+
+  .stats-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .stat-card {
+    padding: 12px 14px;
+  }
+
+  .stat-card-value {
+    font-size: 24px;
+  }
+
+  .table-container-card {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .reception-table {
+    min-width: 620px;
+  }
+
+  .walkin-modal {
+    padding: 20px 16px;
+    max-width: 92vw;
+  }
+}

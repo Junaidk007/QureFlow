@@ -1,0 +1,107 @@
+/* ==========================================================================
+   Pill-Shaped Floating Bottom Navigation Bar
+   Mobile-Only Component (Matching Reference Image)
+   ========================================================================== */
+
+.floating-bottom-nav {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .floating-bottom-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    position: fixed;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 28px);
+    max-width: 410px;
+    height: 64px;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border-radius: 9999px;
+    border: 1px solid rgba(212, 228, 245, 0.9);
+    box-shadow: 0 12px 32px rgba(7, 22, 41, 0.12), 0 2px 6px rgba(7, 22, 41, 0.05);
+    z-index: 1000;
+    padding: 0 12px;
+  }
+
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #94A3B8;
+    padding: 6px 10px;
+    border-radius: 20px;
+    flex: 1;
+    transition: color 150ms ease, transform 150ms ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .nav-item:hover,
+  .nav-item:active {
+    color: var(--deep-winter-blue, #17345C);
+  }
+
+  .nav-item.active {
+    color: #0F172A;
+  }
+
+  .nav-label {
+    font-size: 10.5px;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+
+  .nav-item.active .nav-label {
+    font-weight: 700;
+    color: #0F172A;
+  }
+
+  /* Center Plus Button Wrapper */
+  .center-plus-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    flex-shrink: 0;
+  }
+
+  /* Center Elevated Circular Blue Plus Button */
+  .center-plus-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #17345C;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(37, 99, 235, 0.42);
+    transition: transform 150ms ease, box-shadow 150ms ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .center-plus-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 22px rgba(37, 99, 235, 0.5);
+  }
+
+  .center-plus-btn:active {
+    transform: scale(0.96);
+  }
+
+  .center-plus-btn.active {
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3), 0 6px 18px rgba(37, 99, 235, 0.42);
+  }
+}

@@ -9,13 +9,18 @@ import {
   Building2,
   CheckCircle2,
   AlertCircle,
+  AlertTriangle,
   Check,
+  Info,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../api/client';
+import PatientHeader from '../../components/PatientHeader/PatientHeader';
+import BottomNav from '../../components/BottomNav/BottomNav';
+import MuiSelect from '../../components/Mui/MuiSelect';
 import './BookingPage.css';
 
-// Helper to generate next 7 days for the date strip
+// Helper to generate next 7 days for quick date presets
 const getNext7Days = () => {
   const days = [];
   const now = new Date();
@@ -49,15 +54,11 @@ export default function BookingPage() {
   const daysList = getNext7Days();
   const [selectedDate, setSelectedDate] = useState(daysList[0].dateStr);
 
-  const [slotsLoading, setSlotsLoading] = useState(false);
-  const [slots, setSlots] = useState([]);
-  const [selectedTime, setSelectedTime] = useState('');
-
   const [bookingLoading, setBookingLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [successBooking, setSuccessBooking] = useState(null);
 
-  // Load doctors on mount
+  // Load active doctors
   useEffect(() => {
     const loadDoctors = async () => {
       try {
@@ -75,36 +76,27 @@ export default function BookingPage() {
     loadDoctors();
   }, [searchParams]);
 
-  // Load slots whenever doctor or date changes
-  useEffect(() => {
-    if (!selectedDoctorId || !selectedDate) return;
-
-    const loadSlots = async () => {
-      setSlotsLoading(true);
-      setErrorMsg('');
-      setSelectedTime('');
-
-      try {
-        const res = await api.get(`/appointments/slots?doctorId=${selectedDoctorId}&date=${selectedDate}`);
-        if (res.data && res.data.slots) {
-          setSlots(res.data.slots);
-        }
-      } catch (err) {
-        setErrorMsg('Failed to load slot schedule for this date.');
-      } finally {
-        setSlotsLoading(false);
-      }
-    };
-
-    loadSlots();
-  }, [selectedDoctorId, selectedDate]);
-
   const selectedDoctor = doctors.find((d) => d._id === selectedDoctorId);
+  const clinic = selectedDoctor?.clinicId;
+  const checkInStartTime = clinic?.checkInStartTime || '09:00';
+  const checkInEndTime = clinic?.checkInEndTime || '22:00';
+
+  // Format options for Material UI Select
+  const doctorOptions = doctors.map((doc) => ({
+    value: doc._id,
+    label: doc.name,
+    sublabel: `${doc.specialization} · ${doc.clinicId?.name || 'Clinic'}`,
+  }));
+
+  const visitTypeOptions = [
+    { value: 'NEW', label: 'New Consultation', sublabel: 'First consultation with this specialist' },
+    { value: 'FOLLOW-UP', label: 'Follow-Up Visit', sublabel: 'Reviewing ongoing treatment or test results' },
+  ];
 
   // Handle booking confirm
   const handleConfirmBooking = async () => {
-    if (!selectedTime) {
-      setErrorMsg('Please select a time slot.');
+    if (!selectedDoctor) {
+      setErrorMsg('Please select a consulting doctor.');
       return;
     }
 
@@ -116,68 +108,62 @@ export default function BookingPage() {
         doctorId: selectedDoctor._id,
         clinicId: selectedDoctor.clinicId?._id || selectedDoctor.clinicId,
         appointmentDate: selectedDate,
-        appointmentTime: selectedTime,
         type: visitType,
       });
 
       setSuccessBooking(res.data);
     } catch (err) {
-      setErrorMsg(err.message || 'Slot booking failed. Please try another time.');
+      setErrorMsg(err.message || 'Appointment booking failed. Please try again.');
     } finally {
       setBookingLoading(false);
     }
   };
 
-  const morningSlots = slots.filter((s) => s.period === 'morning');
-  const afternoonSlots = slots.filter((s) => s.period === 'afternoon');
-
   return (
     <div className="booking-page-layout">
-      {/* Header */}
-      <header className="booking-header">
-        <button className="back-link" onClick={() => navigate('/dashboard')}>
-          <ArrowLeft size={16} /> Dashboard
-        </button>
-        <div className="brand-name">QureFlow Booking</div>
-        <div className="user-pill">{user?.name}</div>
-      </header>
+      {/* Patient Header (Logo on left, Hamburger Menu with profile & logout on right on mobile) */}
+      <PatientHeader title="Book Doctor" showBack={true} backPath="/dashboard" />
 
       {/* Main Grid Content */}
       <main className="booking-grid-container">
         {/* Left Column: Form & Schedule */}
         <div className="booking-main-col">
-          {/* Doctor Header Selector */}
+          {/* Doctor Header Selector with Material UI Dropdown */}
           <section className="card doctor-select-card">
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+            <div className="doctor-select-top-bar">
               <span className="badge badge-blue">CONSULTING SPECIALIST</span>
-              {doctors.length > 1 && (
-                <select
-                  className="form-input"
-                  style={{ width: 'auto', height: 34, fontSize: 13 }}
-                  value={selectedDoctorId}
-                  onChange={(e) => setSelectedDoctorId(e.target.value)}
-                >
-                  {doctors.map((doc) => (
-                    <option key={doc._id} value={doc._id}>
-                      {doc.name} ({doc.specialization})
-                    </option>
-                  ))}
-                </select>
-              )}
+              <span className="doctor-count-hint text-muted">
+                {doctors.length} Specialist{doctors.length !== 1 ? 's' : ''} Available
+              </span>
+            </div>
+
+            {/* Material UI Dropdown for Doctor Selection */}
+            <div className="mui-select-wrapper">
+              <MuiSelect
+                label="Choose Consulting Doctor"
+                value={selectedDoctorId}
+                onChange={(id) => {
+                  setSelectedDoctorId(id);
+                  setErrorMsg('');
+                }}
+                options={doctorOptions}
+                placeholder="Select a specialist doctor"
+                helperText="Select specialist for your clinical consultation"
+              />
             </div>
 
             {selectedDoctor && (
-              <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+              <div className="selected-doctor-profile">
                 <div className="doctor-large-avatar">
                   <Stethoscope size={28} color="#17345C" />
                 </div>
-                <div>
-                  <h2 className="text-h2">{selectedDoctor.name}</h2>
-                  <p className="text-muted">{selectedDoctor.specialization}</p>
-                  <div style={{ display: 'flex', gap: 8, marginTop: 6 }}>
+                <div className="doctor-profile-details">
+                  <h2 className="doctor-profile-name">{selectedDoctor.name}</h2>
+                  <p className="doctor-profile-spec text-muted">{selectedDoctor.specialization}</p>
+                  <div className="doctor-badges-list">
                     <span className="badge badge-green">Available</span>
                     <span className="badge badge-blue">
-                      <Building2 size={12} /> {selectedDoctor.clinicId?.name || 'City Central Health Clinic'}
+                      <Building2 size={12} /> {clinic?.name || 'City Central Health Clinic'}
                     </span>
                   </div>
                 </div>
@@ -185,10 +171,17 @@ export default function BookingPage() {
             )}
           </section>
 
-          {/* Visit Type Segmented Control */}
-          <section style={{ marginTop: 24 }}>
+          {/* Visit Type with Material UI Dropdown & Quick Pills */}
+          <section className="booking-field-section">
             <h3 className="section-heading">Visit Type</h3>
-            <div className="visit-type-pills">
+            <MuiSelect
+              label="Consultation Category"
+              value={visitType}
+              onChange={(val) => setVisitType(val)}
+              options={visitTypeOptions}
+            />
+
+            <div className="visit-type-pills" style={{ marginTop: 8 }}>
               <button
                 type="button"
                 className={`type-pill ${visitType === 'NEW' ? 'active' : ''}`}
@@ -206,8 +199,8 @@ export default function BookingPage() {
             </div>
           </section>
 
-          {/* 7-Day Date Strip */}
-          <section style={{ marginTop: 24 }}>
+          {/* Select Date (7-Day Strip) */}
+          <section className="booking-field-section">
             <h3 className="section-heading">Select Date</h3>
             <div className="date-strip">
               {daysList.map((day) => (
@@ -215,7 +208,10 @@ export default function BookingPage() {
                   key={day.dateStr}
                   type="button"
                   className={`date-pill ${selectedDate === day.dateStr ? 'active' : ''}`}
-                  onClick={() => setSelectedDate(day.dateStr)}
+                  onClick={() => {
+                    setSelectedDate(day.dateStr);
+                    setErrorMsg('');
+                  }}
                 >
                   <span className="date-day">{day.dayName}</span>
                   <span className="date-number">{day.dayNumber}</span>
@@ -225,74 +221,43 @@ export default function BookingPage() {
             </div>
           </section>
 
-          {/* Slot Grid */}
-          <section style={{ marginTop: 24 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-              <h3 className="section-heading" style={{ margin: 0 }}>
-                Available Time Slots
-              </h3>
-              <div style={{ display: 'flex', gap: 12, fontSize: 12 }}>
-                <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                  <span className="legend-dot available"></span> Available
-                </span>
-                <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                  <span className="legend-dot booked"></span> Booked
-                </span>
+          {/* OPD Check-in Information Card */}
+          <section className="booking-field-section">
+            <div className="card opd-info-card">
+              <div className="opd-card-content">
+                <div className="opd-clock-icon-box">
+                  <Clock size={24} />
+                </div>
+                <div>
+                  <h3 className="text-h3" style={{ fontSize: 16, marginBottom: 4 }}>
+                    OPD Arrival &amp; Check-In Duration
+                  </h3>
+                  <p className="text-muted" style={{ fontSize: 13, lineHeight: 1.5, marginBottom: 12 }}>
+                    Tokens are assigned sequentially on arrival. Arrive on your chosen date within the clinic check-in hours.
+                  </p>
+
+                  <div className="opd-hours-chip">
+                    <span className="badge badge-blue" style={{ fontSize: 13, padding: '4px 10px' }}>
+                      Check-In Hours: {checkInStartTime} – {checkInEndTime}
+                    </span>
+                    <span style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>
+                      Tokens are issued sequentially upon scanning arrival QR code.
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="opd-warning-alert">
+                <AlertTriangle size={18} color="#D97706" style={{ flexShrink: 0, marginTop: 1 }} />
+                <p style={{ fontSize: 12.5, color: '#92400E', margin: 0, lineHeight: 1.45, fontWeight: 500 }}>
+                  <strong>Important Notice:</strong> You have to check in between <strong>{checkInStartTime}</strong> and <strong>{checkInEndTime}</strong> on your appointment date, otherwise your appointment will be invalid and cancelled.
+                </p>
               </div>
             </div>
 
             {errorMsg && (
-              <div className="auth-alert error" style={{ marginBottom: 14 }}>
+              <div className="auth-alert error" style={{ marginTop: 16 }}>
                 <AlertCircle size={16} /> <span>{errorMsg}</span>
-              </div>
-            )}
-
-            {slotsLoading ? (
-              <div className="card" style={{ padding: 24, textAlign: 'center' }}>
-                <div className="spinner" style={{ margin: '0 auto 8px' }}></div>
-                <p className="text-muted">Loading schedule...</p>
-              </div>
-            ) : (
-              <div>
-                {/* Morning Slots */}
-                <div style={{ marginBottom: 18 }}>
-                  <div className="session-title">
-                    <Clock size={14} /> Morning Session (09:00 – 12:45)
-                  </div>
-                  <div className="slots-grid">
-                    {morningSlots.map((slot) => (
-                      <button
-                        key={slot.time}
-                        type="button"
-                        className={`slot-chip ${slot.isBooked ? 'booked' : ''} ${selectedTime === slot.time ? 'selected' : ''}`}
-                        disabled={slot.isBooked}
-                        onClick={() => setSelectedTime(slot.time)}
-                      >
-                        {slot.time}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Afternoon Slots */}
-                <div>
-                  <div className="session-title">
-                    <Clock size={14} /> Afternoon Session (13:30 – 17:00)
-                  </div>
-                  <div className="slots-grid">
-                    {afternoonSlots.map((slot) => (
-                      <button
-                        key={slot.time}
-                        type="button"
-                        className={`slot-chip ${slot.isBooked ? 'booked' : ''} ${selectedTime === slot.time ? 'selected' : ''}`}
-                        disabled={slot.isBooked}
-                        onClick={() => setSelectedTime(slot.time)}
-                      >
-                        {slot.time}
-                      </button>
-                    ))}
-                  </div>
-                </div>
               </div>
             )}
           </section>
@@ -301,9 +266,7 @@ export default function BookingPage() {
         {/* Right Column: Booking Summary Card */}
         <aside className="booking-summary-col">
           <div className="card card-elevated sticky-summary">
-            <h3 className="text-h3" style={{ borderBottom: '1px solid var(--border)', paddingBottom: 12 }}>
-              Booking Summary
-            </h3>
+            <h3 className="summary-card-title">Booking Summary</h3>
 
             <div className="summary-list">
               <div className="summary-row">
@@ -315,17 +278,21 @@ export default function BookingPage() {
                 <span>{selectedDoctor?.specialization || '—'}</span>
               </div>
               <div className="summary-row">
-                <span className="text-muted">Visit Type</span>
-                <span>{visitType === 'NEW' ? 'New Consultation' : 'Follow-Up'}</span>
+                <span className="text-muted">Clinic Facility</span>
+                <span>{clinic?.name || 'City Central Health Clinic'}</span>
               </div>
               <div className="summary-row">
-                <span className="text-muted">Date</span>
+                <span className="text-muted">Visit Type</span>
+                <span>{visitType === 'NEW' ? 'New Consultation' : 'Follow-Up Visit'}</span>
+              </div>
+              <div className="summary-row">
+                <span className="text-muted">Appointment Date</span>
                 <strong>{selectedDate}</strong>
               </div>
               <div className="summary-row">
-                <span className="text-muted">Slot Time</span>
-                <strong style={{ color: selectedTime ? 'var(--deep-winter-blue)' : 'var(--muted-foreground)' }}>
-                  {selectedTime ? `${selectedTime} hrs` : 'Not Selected'}
+                <span className="text-muted">Check-In Duration</span>
+                <strong style={{ color: 'var(--deep-winter-blue)' }}>
+                  {checkInStartTime} – {checkInEndTime}
                 </strong>
               </div>
             </div>
@@ -333,27 +300,29 @@ export default function BookingPage() {
             <div className="checkin-notice-box">
               <div style={{ display: 'flex', gap: 8 }}>
                 <Clock size={16} color="#17345C" style={{ flexShrink: 0, marginTop: 2 }} />
-                <p style={{ fontSize: 12, lineHeight: 1.4 }}>
-                  <strong>Check-in Window:</strong> Arrive 15 mins before your slot. Scanning the arrival QR code will mint your queue token.
+                <p style={{ fontSize: 12, lineHeight: 1.4, margin: 0 }}>
+                  <strong>Arrival Check-In:</strong> You have to check in between <strong>{checkInStartTime} – {checkInEndTime}</strong> on {selectedDate}, else your appointment will be invalid.
                 </p>
               </div>
             </div>
 
-            <button
-              type="button"
-              className="btn btn-primary btn-block"
-              style={{ marginTop: 20 }}
-              disabled={bookingLoading || !selectedTime}
-              onClick={handleConfirmBooking}
-            >
-              {bookingLoading ? (
-                <div className="spinner"></div>
-              ) : (
-                <>
-                  <Check size={16} /> Confirm &amp; Book Slot
-                </>
-              )}
-            </button>
+            {/* Confirm Button with ample spacing */}
+            <div className="confirm-btn-container">
+              <button
+                type="button"
+                className="btn btn-primary btn-block btn-confirm-booking"
+                disabled={bookingLoading || !selectedDoctor}
+                onClick={handleConfirmBooking}
+              >
+                {bookingLoading ? (
+                  <div className="spinner"></div>
+                ) : (
+                  <>
+                    <CheckCircle2 size={18} /> Confirm &amp; Book Appointment
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         </aside>
       </main>
@@ -361,52 +330,69 @@ export default function BookingPage() {
       {/* Confirmation Modal */}
       <AnimatePresence>
         {successBooking && (
-          <div className="modal-backdrop">
+          <div className="modal-backdrop" onClick={() => navigate('/dashboard')}>
             <motion.div
-              className="card card-elevated modal-content"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
+              className="card modal-content"
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
             >
               <div className="modal-icon-circle">
-                <CheckCircle2 size={36} color="#10B981" />
+                <Check size={36} color="#15803D" />
               </div>
 
-              <h2 className="text-h2" style={{ textAlign: 'center', marginTop: 12 }}>
+              <h2 className="text-h2" style={{ textAlign: 'center', marginTop: 16 }}>
                 Appointment Confirmed!
               </h2>
-              <p className="text-muted" style={{ textAlign: 'center', fontSize: 13, marginTop: 4 }}>
-                Reference ID: <code>{successBooking.appointmentId}</code>
+              <p className="text-muted" style={{ textAlign: 'center', marginBottom: 20 }}>
+                Your clinical consultation has been booked successfully.
               </p>
 
-              <div className="confirmation-details-box" style={{ marginTop: 20 }}>
+              <div className="confirmation-details-box">
                 <div className="summary-row">
-                  <span className="text-muted">Specialist</span>
-                  <strong>{successBooking.details?.doctorName}</strong>
+                  <span className="text-muted">Doctor</span>
+                  <strong>{successBooking.details?.doctorName || selectedDoctor?.name}</strong>
                 </div>
                 <div className="summary-row">
-                  <span className="text-muted">Date & Time</span>
-                  <strong>
-                    {successBooking.appointmentDate} at {successBooking.appointmentTime} hrs
+                  <span className="text-muted">Date</span>
+                  <strong>{successBooking.details?.appointmentDate || selectedDate}</strong>
+                </div>
+                <div className="summary-row">
+                  <span className="text-muted">Check-In Window</span>
+                  <strong style={{ color: 'var(--deep-winter-blue)' }}>
+                    {successBooking.details?.checkInWindow?.startTime || checkInStartTime} – {successBooking.details?.checkInWindow?.endTime || checkInEndTime}
                   </strong>
-                </div>
-                <div className="summary-row">
-                  <span className="text-muted">Clinic</span>
-                  <span>{successBooking.details?.clinicName}</span>
                 </div>
               </div>
 
-              <p style={{ fontSize: 12, color: 'var(--deep-winter-blue)', margin: '16px 0', textAlign: 'center', fontWeight: 500 }}>
-                {successBooking.details?.checkInWindow?.notice}
-              </p>
+              <div className="modal-warning-box">
+                ⚠️ <strong>Notice:</strong> You have to check in between <strong>{successBooking.details?.checkInWindow?.startTime || checkInStartTime}</strong> and <strong>{successBooking.details?.checkInWindow?.endTime || checkInEndTime}</strong>, else your appointment will be invalid.
+              </div>
 
-              <button className="btn btn-primary btn-block" onClick={() => navigate('/dashboard')}>
-                Return to Home Dashboard
-              </button>
+              <div style={{ display: 'flex', gap: 10 }}>
+                <button
+                  type="button"
+                  className="btn btn-secondary btn-block"
+                  onClick={() => navigate('/dashboard')}
+                >
+                  Back to Dashboard
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-primary btn-block"
+                  onClick={() => navigate('/appointments')}
+                >
+                  My Appointments
+                </button>
+              </div>
             </motion.div>
           </div>
         )}
       </AnimatePresence>
+
+      {/* Floating Pill Bottom Navbar for mobile */}
+      <BottomNav />
     </div>
   );
 }

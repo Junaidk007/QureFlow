@@ -8,6 +8,7 @@ import PatientHomePage from './pages/PatientHome/PatientHomePage';
 import BookingPage from './pages/Booking/BookingPage';
 import CheckInPage from './pages/CheckIn/CheckInPage';
 import QueuePage from './pages/Queue/QueuePage';
+import MyAppointmentsPage from './pages/Appointments/MyAppointmentsPage';
 import ReceptionPage from './pages/Reception/ReceptionPage';
 import DoctorPage from './pages/Doctor/DoctorPage';
 
@@ -56,6 +57,24 @@ export default function App() {
             element={
               <ProtectedRoute allowedRoles={['PATIENT']}>
                 <QueuePage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Screen: My Appointments (Dedicated Page) */}
+          <Route
+            path="/appointments"
+            element={
+              <ProtectedRoute allowedRoles={['PATIENT']}>
+                <MyAppointmentsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/my-appointments"
+            element={
+              <ProtectedRoute allowedRoles={['PATIENT']}>
+                <MyAppointmentsPage />
               </ProtectedRoute>
             }
           />

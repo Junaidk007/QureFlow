@@ -24,10 +24,10 @@ const appointmentSchema = Joi.object({
     }),
   appointmentTime: Joi.string()
     .pattern(/^([01]\d|2[0-3]):[0-5]\d$/)
-    .required()
+    .optional()
+    .allow('', null)
     .messages({
       'string.pattern.base': 'Appointment time must be in HH:mm format (24-hour)',
-      'any.required': 'Appointment time is required',
     }),
   type: Joi.string().valid('NEW', 'FOLLOW-UP').default('NEW'),
 });

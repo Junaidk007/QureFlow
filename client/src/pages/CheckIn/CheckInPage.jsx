@@ -14,6 +14,8 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../api/client';
+import PatientHeader from '../../components/PatientHeader/PatientHeader';
+import BottomNav from '../../components/BottomNav/BottomNav';
 import './CheckInPage.css';
 
 export default function CheckInPage() {
@@ -98,14 +100,8 @@ export default function CheckInPage() {
 
   return (
     <div className="checkin-page-layout">
-      {/* Header */}
-      <header className="checkin-header">
-        <button className="back-link" onClick={() => navigate('/dashboard')}>
-          <ArrowLeft size={16} /> Dashboard
-        </button>
-        <div className="brand-name">Arrival QR Check-In</div>
-        <div className="user-pill">{user?.name}</div>
-      </header>
+      {/* Standard Patient Header (Profile on top-left, Logout on top-right on mobile) */}
+      <PatientHeader title="Arrival QR Check-In" showBack={true} backPath="/dashboard" />
 
       {/* Main Viewport */}
       <main className="checkin-main-container">
@@ -126,7 +122,9 @@ export default function CheckInPage() {
               <div className="card appt-info-card">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
                   <span className="badge badge-green">VERIFIED APPOINTMENT</span>
-                  <span className="text-caption">Slot: {appointment.appointmentTime} hrs</span>
+                  <span className="badge badge-blue">
+                    Check-in: {appointment.checkInWindow?.startTime || '09:00'} – {appointment.checkInWindow?.endTime || '12:00'}
+                  </span>
                 </div>
 
                 <div style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
@@ -146,10 +144,10 @@ export default function CheckInPage() {
                   </div>
                 </div>
 
-                <div className="checkin-window-alert" style={{ marginTop: 14 }}>
-                  <Clock size={14} color="#17345C" />
-                  <span>
-                    Arrival Check-In: Active for today ({appointment.appointmentDate})
+                <div className="checkin-window-alert" style={{ marginTop: 14, background: '#FFFBEB', borderColor: '#FCD34D', color: '#92400E' }}>
+                  <Clock size={15} color="#D97706" style={{ flexShrink: 0 }} />
+                  <span style={{ fontSize: 12.5, fontWeight: 500 }}>
+                    Notice: You have to check in between <strong>{appointment.checkInWindow?.startTime || '09:00'}</strong> and <strong>{appointment.checkInWindow?.endTime || '12:00'}</strong>, else your appointment will be invalid.
                   </span>
                 </div>
               </div>
@@ -321,6 +319,9 @@ export default function CheckInPage() {
           </div>
         )}
       </AnimatePresence>
+
+      {/* Floating Pill Bottom Navbar for mobile */}
+      <BottomNav />
     </div>
   );
 }

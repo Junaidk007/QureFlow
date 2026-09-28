@@ -272,3 +272,212 @@
   font-size: 12px;
   color: var(--muted-foreground);
 }
+
+/* My Appointments Section */
+.appointments-section {
+  margin-top: 36px;
+  margin-bottom: 36px;
+}
+
+.appointments-header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.filter-pills-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filter-pill {
+  padding: 6px 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.filter-pill:hover {
+  background: var(--frost-mist);
+  color: var(--foreground);
+}
+
+.filter-pill.active {
+  background: var(--deep-winter-blue);
+  color: var(--snow-white);
+  border-color: var(--deep-winter-blue);
+}
+
+.appointments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.appointment-card {
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.appointment-card:hover {
+  box-shadow: var(--shadow-elevated);
+}
+
+.appointment-card.status-cancelled {
+  opacity: 0.75;
+  background: #F8FAFC;
+}
+
+.appointment-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.appointment-card-body {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 14px;
+  font-size: 13px;
+}
+
+.appointment-card-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.btn-cancel-appt {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--error-border, #FCA5A5);
+  background: var(--error-bg, #FEF2F2);
+  color: var(--error-text, #DC2626);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-cancel-appt:hover {
+  background: #FEE2E2;
+  border-color: #EF4444;
+}
+
+/* Mobile Responsive Adjustments */
+@media (max-width: 768px) {
+  .home-content {
+    padding: 16px 14px 120px;
+  }
+
+  .welcome-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .clinic-location-badge {
+    align-self: flex-start;
+    font-size: 12px;
+  }
+
+  .hero-context-card {
+    padding: 18px 16px;
+  }
+
+  .context-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .context-card-footer {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .context-card-footer button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .action-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .action-card {
+    padding: 16px 10px;
+  }
+
+  .appointments-header-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .filter-pills-row {
+    overflow-x: auto;
+    width: 100%;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+
+  .filter-pills-row::-webkit-scrollbar {
+    display: none;
+  }
+
+  .filter-pill {
+    white-space: nowrap;
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .appointment-card {
+    padding: 16px;
+  }
+
+  .appointment-card-body {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .appointment-card-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .appointment-card-actions button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+

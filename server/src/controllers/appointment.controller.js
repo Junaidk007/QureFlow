@@ -1,9 +1,11 @@
 const Appointment = require('../models/Appointment');
 const Clinic = require('../models/Clinic');
 const User = require('../models/User');
+const Visit = require('../models/Visit');
 const ApiError = require('../utils/apiError');
 const ApiResponse = require('../utils/apiResponse');
 const wrapAsync = require('../utils/wrapAsync');
+const wsService = require('../services/wsService');
 
 // Helper to generate clinic daily slots (09:00 - 17:00, 15-min intervals)
 const generateDailyTimeSlots = () => {
@@ -31,7 +33,7 @@ const generateDailyTimeSlots = () => {
 };
 
 /**
- * Get available vs booked slots for a doctor on a specific date
+ * Get available vs booked slots for a doctor on a specific date (legacy support)
  * GET /api/v1/appointments/slots?doctorId=&date=YYYY-MM-DD
  */
 const getAvailableSlots = wrapAsync(async (req, res) => {
@@ -50,7 +52,7 @@ const getAvailableSlots = wrapAsync(async (req, res) => {
     .select('appointmentTime')
     .lean();
 
-  const bookedSet = new Set(bookedAppointments.map((a) => a.appointmentTime));
+  const bookedSet = new Set(bookedAppointments.map((a) => a.appointmentTime).filter(Boolean));
 
   const allSlots = generateDailyTimeSlots();
   const slotsWithStatus = allSlots.map((slot) => ({
@@ -73,7 +75,7 @@ const getAvailableSlots = wrapAsync(async (req, res) => {
 });
 
 /**
- * Book an appointment slot
+ * Book an appointment (No time slot selection needed)
  * POST /api/v1/appointments
  */
 const bookAppointment = wrapAsync(async (req, res) => {
@@ -98,31 +100,18 @@ const bookAppointment = wrapAsync(async (req, res) => {
     throw ApiError.badRequest('Cannot book an appointment for a past date', 'PAST_DATE_INVALID');
   }
 
-  // 4. Atomic collision check
-  const existingBooking = await Appointment.findOne({
+  // 4. Duplicate booking check for this patient on the same day with this doctor
+  const existingPatientBooking = await Appointment.findOne({
+    patientId,
     doctorId,
     appointmentDate,
-    appointmentTime,
     status: 'BOOKED',
   });
 
-  if (existingBooking) {
-    // Find next available slot for this doctor on this day
-    const allSlots = generateDailyTimeSlots();
-    const otherBookings = await Appointment.find({
-      doctorId,
-      appointmentDate,
-      status: 'BOOKED',
-    })
-      .select('appointmentTime')
-      .lean();
-    const bookedTimes = new Set(otherBookings.map((b) => b.appointmentTime));
-    const nextSlot = allSlots.find((s) => s.time > appointmentTime && !bookedTimes.has(s.time));
-
+  if (existingPatientBooking) {
     throw ApiError.conflict(
-      `Slot at ${appointmentTime} is already booked.`,
-      'SLOT_ALREADY_TAKEN',
-      nextSlot ? { nextAvailableSlot: nextSlot.time } : null
+      `You already have an active appointment booked with Dr. ${doctor.name} on ${appointmentDate}.`,
+      'APPOINTMENT_ALREADY_EXISTS'
     );
   }
 
@@ -132,14 +121,14 @@ const bookAppointment = wrapAsync(async (req, res) => {
     doctorId,
     clinicId,
     appointmentDate,
-    appointmentTime,
+    appointmentTime: appointmentTime || null,
     type,
     status: 'BOOKED',
   });
 
-  // Calculate check-in window
-  const windowStartMinutes = clinic.checkInWindowStartMinutes || 15;
-  const windowEndMinutes = clinic.checkInWindowEndMinutes || 15;
+  // Calculate check-in window from clinic settings
+  const startTime = clinic.checkInStartTime || '09:00';
+  const endTime = clinic.checkInEndTime || '12:00';
 
   return ApiResponse.created(
     res,
@@ -147,20 +136,117 @@ const bookAppointment = wrapAsync(async (req, res) => {
       appointmentId: appointment._id,
       status: appointment.status,
       appointmentDate,
-      appointmentTime,
+      appointmentTime: appointment.appointmentTime,
       type,
       details: {
         doctorName: doctor.name,
         specialization: doctor.specialization,
         clinicName: clinic.name,
         checkInWindow: {
-          startMinutesBefore: windowStartMinutes,
-          endMinutesAfter: windowEndMinutes,
-          notice: `Please check in between ${windowStartMinutes} mins before and ${windowEndMinutes} mins after your slot.`,
+          startTime,
+          endTime,
+          notice: `Please check in between ${startTime} and ${endTime} on your appointment date at the clinic OPD, otherwise your appointment will be invalid.`,
         },
       },
     },
     'Appointment successfully booked'
+  );
+});
+
+/**
+ * Get all appointments for the logged-in patient
+ * GET /api/v1/appointments/my-appointments
+ */
+const getMyAppointments = wrapAsync(async (req, res) => {
+  const patientId = req.user.sub;
+
+  const appointments = await Appointment.find({ patientId })
+    .sort({ appointmentDate: -1, createdAt: -1 })
+    .populate('doctorId', 'name specialization')
+    .populate('clinicId', 'name address checkInStartTime checkInEndTime')
+    .lean();
+
+  // Find any visits corresponding to these appointments
+  const apptIds = appointments.map((a) => a._id);
+  const visits = await Visit.find({ appointmentId: { $in: apptIds } })
+    .select('appointmentId tokenId status checkedInAt')
+    .lean();
+
+  const visitMap = new Map();
+  visits.forEach((v) => {
+    visitMap.set(v.appointmentId.toString(), v);
+  });
+
+  const enrichedAppointments = appointments.map((appt) => {
+    const visit = visitMap.get(appt._id.toString());
+    const clinic = appt.clinicId;
+    const checkInStartTime = clinic?.checkInStartTime || '09:00';
+    const checkInEndTime = clinic?.checkInEndTime || '12:00';
+
+    return {
+      ...appt,
+      visit: visit || null,
+      checkInWindow: {
+        startTime: checkInStartTime,
+        endTime: checkInEndTime,
+        notice: `Check in between ${checkInStartTime} and ${checkInEndTime} on the appointment date, otherwise your appointment will be invalid.`,
+      },
+    };
+  });
+
+  return ApiResponse.success(res, enrichedAppointments, 'Appointments retrieved successfully');
+});
+
+/**
+ * Cancel an appointment
+ * PUT /api/v1/appointments/:id/cancel
+ */
+const cancelAppointment = wrapAsync(async (req, res) => {
+  const { id } = req.params;
+  const userId = req.user.sub;
+  const userRole = req.user.role;
+
+  const appointment = await Appointment.findById(id);
+  if (!appointment) {
+    throw ApiError.notFound('Appointment not found', 'APPOINTMENT_NOT_FOUND');
+  }
+
+  // Verify ownership or receptionist role
+  if (userRole !== 'RECEPTIONIST' && appointment.patientId.toString() !== userId) {
+    throw ApiError.forbidden('You are not authorized to cancel this appointment', 'FORBIDDEN');
+  }
+
+  if (appointment.status === 'CANCELLED') {
+    throw ApiError.badRequest('This appointment is already cancelled', 'ALREADY_CANCELLED');
+  }
+
+  appointment.status = 'CANCELLED';
+  await appointment.save();
+
+  // If there's an active visit for this appointment, cancel it too
+  const activeVisit = await Visit.findOne({
+    appointmentId: appointment._id,
+    status: { $in: ['CHECKED_IN', 'IN_QUEUE'] },
+  });
+
+  if (activeVisit) {
+    activeVisit.status = 'CANCELLED';
+    await activeVisit.save();
+  }
+
+  // Broadcast WebSocket update
+  wsService.broadcastQueueUpdate(appointment.clinicId, appointment.doctorId, {
+    action: 'APPOINTMENT_CANCELLED',
+    appointmentId: appointment._id,
+  });
+
+  return ApiResponse.success(
+    res,
+    {
+      appointmentId: appointment._id,
+      status: appointment.status,
+    },
+    'Appointment successfully cancelled'
   );
 });
 
@@ -177,10 +263,20 @@ const getMyUpcomingAppointment = wrapAsync(async (req, res) => {
     appointmentDate: { $gte: todayStr },
     status: 'BOOKED',
   })
-    .sort({ appointmentDate: 1, appointmentTime: 1 })
+    .sort({ appointmentDate: 1, createdAt: 1 })
     .populate('doctorId', 'name specialization')
-    .populate('clinicId', 'name address')
+    .populate('clinicId', 'name address checkInStartTime checkInEndTime')
     .lean();
+
+  if (appointment && appointment.clinicId) {
+    const startTime = appointment.clinicId.checkInStartTime || '09:00';
+    const endTime = appointment.clinicId.checkInEndTime || '12:00';
+    appointment.checkInWindow = {
+      startTime,
+      endTime,
+      notice: `You have to check in between ${startTime} and ${endTime}, else your appointment will be invalid.`,
+    };
+  }
 
   return ApiResponse.success(res, appointment || null, 'Upcoming appointment retrieved');
 });
@@ -188,5 +284,7 @@ const getMyUpcomingAppointment = wrapAsync(async (req, res) => {
 module.exports = {
   getAvailableSlots,
   bookAppointment,
+  getMyAppointments,
+  cancelAppointment,
   getMyUpcomingAppointment,
 };

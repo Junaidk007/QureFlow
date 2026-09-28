@@ -18,7 +18,7 @@ const getActiveDoctors = wrapAsync(async (req, res) => {
 
   const doctors = await User.find(query)
     .select('_id name email specialization availability clinicId')
-    .populate('clinicId', 'name address')
+    .populate('clinicId', 'name address checkInStartTime checkInEndTime')
     .lean();
 
   return ApiResponse.success(res, doctors, 'Active doctors retrieved successfully');

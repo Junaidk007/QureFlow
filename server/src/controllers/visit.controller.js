@@ -50,41 +50,45 @@ const checkIn = wrapAsync(async (req, res) => {
 
   // 4. Verify arrival window
   const clinic = await Clinic.findById(clinicId).lean();
-  const windowStartMins = clinic?.checkInWindowStartMinutes || 15;
-  const windowEndMins = clinic?.checkInWindowEndMinutes || 15;
+  const startTime = clinic?.checkInStartTime || '09:00';
+  const endTime = clinic?.checkInEndTime || '12:00';
 
-  // Compare slot time with current time if appointment is today
   if (appointment.appointmentDate === todayStr) {
-    const [slotH, slotM] = appointment.appointmentTime.split(':').map(Number);
     const now = new Date();
     const currentMins = now.getHours() * 60 + now.getMinutes();
-    const slotMins = slotH * 60 + slotM;
 
-    const earliestCheckIn = slotMins - windowStartMins;
-    const latestCheckIn = slotMins + windowEndMins;
+    const [startH, startM] = startTime.split(':').map(Number);
+    const [endH, endM] = endTime.split(':').map(Number);
+    const startMins = startH * 60 + startM;
+    const endMins = endH * 60 + endM;
 
-    if (currentMins < earliestCheckIn) {
-      const waitRemaining = earliestCheckIn - currentMins;
-      const windowOpenTime = `${String(Math.floor(earliestCheckIn / 60)).padStart(2, '0')}:${String(
-        earliestCheckIn % 60
-      ).padStart(2, '0')}`;
+    if (currentMins < startMins) {
+      const waitRemaining = startMins - currentMins;
       throw ApiError.badRequest(
-        `Check-in is too early. Window opens at ${windowOpenTime} (${waitRemaining} mins from now).`,
+        `Check-in is too early. OPD check-in window opens at ${startTime} (${waitRemaining} mins from now). Please check in between ${startTime} and ${endTime}.`,
         'CHECKIN_TOO_EARLY',
-        { windowOpenTime, minutesRemaining: waitRemaining }
+        { startTime, endTime, minutesRemaining: waitRemaining }
       );
     }
 
-    if (currentMins > latestCheckIn) {
-      const windowCloseTime = `${String(Math.floor(latestCheckIn / 60)).padStart(2, '0')}:${String(
-        latestCheckIn % 60
-      ).padStart(2, '0')}`;
+    if (currentMins > endMins) {
       throw ApiError.badRequest(
-        `Check-in window closed at ${windowCloseTime}. Please approach the reception desk for manual triage.`,
+        `Check-in window closed at ${endTime}. Your appointment is now invalid. Please approach the reception desk for assistance.`,
         'CHECKIN_WINDOW_EXPIRED',
-        { windowCloseTime, action: 'APPROACH_RECEPTION_DESK' }
+        { startTime, endTime, action: 'APPROACH_RECEPTION_DESK' }
       );
     }
+  } else if (appointment.appointmentDate > todayStr) {
+    throw ApiError.badRequest(
+      `Your appointment is scheduled for ${appointment.appointmentDate}. You can only check in on the day of your appointment between ${startTime} and ${endTime}.`,
+      'APPOINTMENT_FUTURE_DATE',
+      { appointmentDate: appointment.appointmentDate, startTime, endTime }
+    );
+  } else {
+    throw ApiError.badRequest(
+      `Your appointment was scheduled for ${appointment.appointmentDate} and has expired.`,
+      'APPOINTMENT_DATE_EXPIRED'
+    );
   }
 
   // 5. Mint sequential daily token

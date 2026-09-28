@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -96,8 +96,10 @@ export default function DoctorPage() {
     fetchQueue();
   }, [fetchQueue]);
 
-  // WebSocket Subscription
-  const rooms = user ? [`doctor:${user._id}`, `clinic:${user.clinicId}`] : [];
+  const rooms = useMemo(
+    () => (user ? [`doctor:${user._id}`, `clinic:${user.clinicId}`] : []),
+    [user?._id, user?.clinicId]
+  );
   const handleWsEvent = useCallback(
     (event, payload) => {
       console.log('[Doctor WS Event]', event, payload);
@@ -218,7 +220,7 @@ export default function DoctorPage() {
         <div className="doctor-brand">
           <div className="doctor-logo-icon">Q</div>
           <div>
-            <strong style="font-family: var(--font-heading); font-size: 17px; display: block;">QureFlow</strong>
+            <strong style={{ fontFamily: 'var(--font-heading)', fontSize: 17, display: 'block' }}>QureFlow</strong>
             <span style={{ fontSize: 11, color: 'var(--color-accent-muted)', fontWeight: 500 }}>
               Doctor Clinical Desk
             </span>

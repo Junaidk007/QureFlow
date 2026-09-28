@@ -191,8 +191,11 @@ async function runTests() {
       patientToken
     );
     assert.strictEqual(collisionRes.statusCode, 409);
-    assert.strictEqual(collisionRes.body.code, 'SLOT_ALREADY_TAKEN');
-    console.log('✓ Collision properly prevented with 409 SLOT_ALREADY_TAKEN');
+    assert(
+      collisionRes.body.code === 'APPOINTMENT_ALREADY_EXISTS' || collisionRes.body.code === 'SLOT_ALREADY_TAKEN',
+      'Should return duplicate booking error code'
+    );
+    console.log(`✓ Duplicate booking properly prevented with 409 ${collisionRes.body.code}`);
 
     // 10. Patient's Upcoming Appointment GET /api/v1/appointments/my-upcoming
     console.log('\n[10] Testing GET /api/v1/appointments/my-upcoming');

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -17,6 +17,8 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import useWebSocket from '../../hooks/useWebSocket';
 import api from '../../api/client';
+import PatientHeader from '../../components/PatientHeader/PatientHeader';
+import BottomNav from '../../components/BottomNav/BottomNav';
 import './QueuePage.css';
 
 export default function QueuePage() {
@@ -75,10 +77,13 @@ export default function QueuePage() {
   );
 
   // Subscribe to clinic and patient rooms
-  const rooms = [];
-  if (queueData?.visit?.clinicId?._id) rooms.push(`clinic:${queueData.visit.clinicId._id}`);
-  if (queueData?.visit?.doctorId?._id) rooms.push(`doctor:${queueData.visit.doctorId._id}`);
-  if (user?._id) rooms.push(`patient:${user._id}`);
+  const rooms = useMemo(() => {
+    const list = [];
+    if (queueData?.visit?.clinicId?._id) list.push(`clinic:${queueData.visit.clinicId._id}`);
+    if (queueData?.visit?.doctorId?._id) list.push(`doctor:${queueData.visit.doctorId._id}`);
+    if (user?._id) list.push(`patient:${user._id}`);
+    return list;
+  }, [queueData?.visit?.clinicId?._id, queueData?.visit?.doctorId?._id, user?._id]);
 
   const { isConnected } = useWebSocket(rooms, handleWsEvent);
 
@@ -99,16 +104,12 @@ export default function QueuePage() {
   if (loading) {
     return (
       <div className="queue-page-layout">
-        <header className="queue-header">
-          <button className="back-link" onClick={() => navigate('/dashboard')}>
-            <ArrowLeft size={16} /> Dashboard
-          </button>
-          <div className="brand-name">Live Queue Tracker</div>
-        </header>
+        <PatientHeader title="Live Queue" showBack={true} backPath="/dashboard" />
         <div style={{ padding: 60, textAlign: 'center' }}>
           <div className="spinner" style={{ margin: '0 auto 12px' }}></div>
           <p className="text-muted">Loading live queue telemetry...</p>
         </div>
+        <BottomNav />
       </div>
     );
   }
@@ -116,12 +117,7 @@ export default function QueuePage() {
   if (!queueData) {
     return (
       <div className="queue-page-layout">
-        <header className="queue-header">
-          <button className="back-link" onClick={() => navigate('/dashboard')}>
-            <ArrowLeft size={16} /> Dashboard
-          </button>
-          <div className="brand-name">Live Queue Tracker</div>
-        </header>
+        <PatientHeader title="Live Queue" showBack={true} backPath="/dashboard" />
         <div className="queue-content-wrapper" style={{ textAlign: 'center', paddingTop: 60 }}>
           <div className="card" style={{ padding: 32 }}>
             <Activity size={36} color="#17345C" style={{ margin: '0 auto 12px' }} />
@@ -134,6 +130,7 @@ export default function QueuePage() {
             </button>
           </div>
         </div>
+        <BottomNav />
       </div>
     );
   }
@@ -149,21 +146,18 @@ export default function QueuePage() {
   return (
     <div className="queue-page-layout">
       {/* Top Header */}
-      <header className="queue-header">
-        <button className="back-link" onClick={() => navigate('/dashboard')}>
-          <ArrowLeft size={16} /> Dashboard
-        </button>
-
-        <div className="header-clinic-meta">
-          <strong>{visit.clinicId?.name || 'Clinic'}</strong>
-          <span className="text-muted">· {visit.doctorId?.name}</span>
-        </div>
-
-        <div className="live-pill">
-          <span className={`pulse-dot ${isConnected ? 'online' : 'offline'}`}></span>
-          <span>{isConnected ? 'Live Sync Active' : 'Connecting...'}</span>
-        </div>
-      </header>
+      <PatientHeader
+        title={visit.clinicId?.name || 'Live Queue'}
+        subtitle={visit.doctorId?.name ? `Dr. ${visit.doctorId.name}` : null}
+        showBack={true}
+        backPath="/dashboard"
+        rightExtra={
+          <div className="live-pill" title={isConnected ? 'Live Sync Active' : 'Connecting...'}>
+            <span className={`pulse-dot ${isConnected ? 'online' : 'offline'}`}></span>
+            <span className="live-pill-label">{isConnected ? 'Live' : 'Connecting'}</span>
+          </div>
+        }
+      />
 
       {/* Main Container */}
       <main className="queue-content-wrapper">
@@ -342,6 +336,9 @@ export default function QueuePage() {
           </div>
         )}
       </AnimatePresence>
+
+      {/* Floating Pill Bottom Navbar for mobile */}
+      <BottomNav />
     </div>
   );
 }

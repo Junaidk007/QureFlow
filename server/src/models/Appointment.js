@@ -24,7 +24,8 @@ const appointmentSchema = new mongoose.Schema(
     },
     appointmentTime: {
       type: String,
-      required: [true, 'Appointment time is required (HH:mm)'],
+      required: false,
+      default: null,
       match: [/^([01]\d|2[0-3]):[0-5]\d$/, 'Time format must be HH:mm (24-hour)'],
     },
     type: {
@@ -49,6 +50,7 @@ const appointmentSchema = new mongoose.Schema(
 
 // Compound and individual indexes
 appointmentSchema.index({ appointmentDate: 1, appointmentTime: 1, doctorId: 1 });
+appointmentSchema.index({ appointmentDate: 1, doctorId: 1 });
 appointmentSchema.index({ patientId: 1 });
 appointmentSchema.index({ clinicId: 1 });
 appointmentSchema.index({ doctorId: 1, appointmentDate: 1 });

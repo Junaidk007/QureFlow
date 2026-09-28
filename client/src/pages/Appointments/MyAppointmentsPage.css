@@ -1,0 +1,444 @@
+/* ==========================================================================
+   MyAppointmentsPage CSS
+   Responsive for Desktop, Tablet, and Mobile
+   ========================================================================== */
+
+.my-appointments-layout {
+  min-height: 100vh;
+  background-color: var(--background);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Nav Header */
+.appointments-nav {
+  height: 64px;
+  background-color: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.nav-left, .nav-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.desktop-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--deep-winter-blue);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: var(--radius);
+  transition: all var(--transition-fast);
+}
+
+.desktop-back-btn:hover {
+  background: var(--frost-mist);
+}
+
+.mobile-profile-btn {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.desktop-user-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--frost-mist);
+  padding: 4px 12px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--deep-winter-blue);
+}
+
+/* Main Content Area */
+.appointments-content {
+  max-width: 880px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 32px 20px 120px;
+}
+
+.appointments-hero-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.btn-book-new {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 18px;
+}
+
+/* Feedback Banner */
+.feedback-banner {
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.feedback-banner.success {
+  background: var(--success-bg);
+  border: 1px solid var(--success-border);
+  color: var(--success-text);
+}
+
+/* Filter Bar */
+.filter-tabs-bar {
+  margin-bottom: 20px;
+}
+
+.filter-pills-container {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.filter-pills-container::-webkit-scrollbar {
+  display: none;
+}
+
+.filter-tab {
+  padding: 7px 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+}
+
+.filter-tab:hover {
+  background: var(--frost-mist);
+  color: var(--foreground);
+}
+
+.filter-tab.active {
+  background: var(--deep-winter-blue);
+  color: var(--snow-white);
+  border-color: var(--deep-winter-blue);
+}
+
+/* Empty State */
+.empty-appointments-card {
+  padding: 48px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Appointment Cards */
+.appointments-cards-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.appt-item-card {
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.appt-item-card:hover {
+  box-shadow: var(--shadow-elevated);
+}
+
+.appt-item-card.cancelled-card {
+  opacity: 0.78;
+  background: #F8FAFC;
+}
+
+.card-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.doc-avatar-info {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.doc-avatar-box {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius);
+  background: var(--frost-mist);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.doc-item-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--foreground);
+  margin: 0;
+}
+
+.doc-item-spec {
+  font-size: 13px;
+  color: var(--muted-foreground);
+  display: block;
+}
+
+.clinic-item-sub {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--deep-winter-blue);
+  margin-top: 2px;
+  font-weight: 500;
+}
+
+.badge-status-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Card Details Grid */
+.card-details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  padding: 14px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 14px;
+}
+
+.detail-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detail-label {
+  font-size: 12px;
+  color: var(--muted-foreground);
+  font-weight: 500;
+}
+
+.detail-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--foreground);
+}
+
+.today-tag {
+  align-self: flex-start;
+  font-size: 11px;
+  margin-top: 2px;
+}
+
+.window-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--frost-mist);
+  border: 1px solid var(--border);
+  padding: 3px 10px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--deep-winter-blue);
+  width: fit-content;
+}
+
+/* Mandatory Check-In Notice Alert */
+.mandatory-checkin-alert {
+  padding: 10px 14px;
+  background: #FFFBEB;
+  border: 1px solid #FCD34D;
+  border-radius: var(--radius);
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+
+.mandatory-checkin-alert p {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: #92400E;
+  font-weight: 500;
+}
+
+.mandatory-checkin-alert.cancelled {
+  background: #FEF2F2;
+  border-color: #FECACA;
+}
+
+.mandatory-checkin-alert.cancelled p {
+  color: #991B1B;
+}
+
+/* Card Actions Row */
+.card-actions-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.ref-code {
+  font-size: 12px;
+  color: var(--muted-foreground);
+  font-family: monospace;
+}
+
+.actions-buttons-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.btn-cancel-appt {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--error-border);
+  background: var(--error-bg);
+  color: var(--error-text);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-cancel-appt:hover {
+  background: #FEE2E2;
+  border-color: #EF4444;
+}
+
+.cancel-icon-circle {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--error-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 12px;
+  color: var(--error-text);
+}
+
+/* ==========================================================================
+   Mobile Responsive Rules (Small Screens <= 768px)
+   ========================================================================== */
+@media (max-width: 768px) {
+  .appointments-nav {
+    padding: 0 16px;
+    height: 58px;
+  }
+
+  .desktop-back-btn,
+  .desktop-user-pill {
+    display: none !important;
+  }
+
+  .mobile-profile-btn {
+    display: flex !important;
+  }
+
+  .mobile-user-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--deep-winter-blue);
+  }
+
+  .appointments-content {
+    padding: 18px 14px 120px;
+  }
+
+  .appointments-hero-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .btn-book-new {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .card-details-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .card-top-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .card-actions-row {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .actions-buttons-group {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .actions-buttons-group button {
+    width: 100%;
+    justify-content: center;
+  }
+}

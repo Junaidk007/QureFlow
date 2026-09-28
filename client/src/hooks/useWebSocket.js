@@ -14,11 +14,30 @@ export const useWebSocket = (rooms = [], onEvent) => {
   const wsRef = useRef(null);
   const reconnectTimeoutRef = useRef(null);
   const backoffDelayRef = useRef(1000); // Start at 1s, backoff up to 8s
+  const isUnmountedRef = useRef(false);
   const [isConnected, setIsConnected] = useState(false);
   const [lastMessage, setLastMessage] = useState(null);
 
+  // Keep references to latest rooms and callback to avoid reconnect cycles
+  const roomsRef = useRef(rooms);
+  roomsRef.current = rooms;
+
+  const onEventRef = useRef(onEvent);
+  onEventRef.current = onEvent;
+
+  const subscribedRoomsRef = useRef(new Set());
+
   const connect = useCallback(() => {
-    if (!token) return;
+    if (isUnmountedRef.current || !token) return;
+
+    // Avoid duplicate connections if already open or connecting
+    if (
+      wsRef.current &&
+      (wsRef.current.readyState === WebSocket.CONNECTING ||
+        wsRef.current.readyState === WebSocket.OPEN)
+    ) {
+      return;
+    }
 
     try {
       const socketUrl = `${WS_BASE_URL}?token=${encodeURIComponent(token)}`;
@@ -26,12 +45,20 @@ export const useWebSocket = (rooms = [], onEvent) => {
       wsRef.current = socket;
 
       socket.onopen = () => {
+        if (isUnmountedRef.current) {
+          socket.close();
+          return;
+        }
         setIsConnected(true);
         backoffDelayRef.current = 1000; // Reset backoff
 
         // Subscribe to initial rooms
-        rooms.forEach((room) => {
-          socket.send(JSON.stringify({ action: 'SUBSCRIBE', room }));
+        subscribedRoomsRef.current.clear();
+        (roomsRef.current || []).forEach((room) => {
+          if (room) {
+            socket.send(JSON.stringify({ action: 'SUBSCRIBE', room }));
+            subscribedRoomsRef.current.add(room);
+          }
         });
       };
 
@@ -40,8 +67,8 @@ export const useWebSocket = (rooms = [], onEvent) => {
           const data = JSON.parse(event.data);
           setLastMessage(data);
 
-          if (onEvent && data.event) {
-            onEvent(data.event, data.payload);
+          if (onEventRef.current && data.event) {
+            onEventRef.current(data.event, data.payload);
           }
         } catch (err) {
           console.error('[WebSocket] Failed to parse incoming message:', err);
@@ -49,34 +76,79 @@ export const useWebSocket = (rooms = [], onEvent) => {
       };
 
       socket.onclose = () => {
+        if (isUnmountedRef.current) return;
         setIsConnected(false);
+        subscribedRoomsRef.current.clear();
+
         // Exponential backoff reconnect
         const nextDelay = Math.min(backoffDelayRef.current * 2, 8000);
         backoffDelayRef.current = nextDelay;
-        reconnectTimeoutRef.current = setTimeout(connect, nextDelay);
+        if (reconnectTimeoutRef.current) {
+          clearTimeout(reconnectTimeoutRef.current);
+        }
+        reconnectTimeoutRef.current = setTimeout(() => {
+          connect();
+        }, nextDelay);
       };
 
       socket.onerror = (err) => {
         console.error('[WebSocket Error]', err);
-        socket.close();
+        // Note: browser triggers onclose automatically
       };
     } catch (err) {
       console.error('[WebSocket Connection Error]', err);
     }
-  }, [token, rooms, onEvent]);
+  }, [token]);
 
   useEffect(() => {
+    isUnmountedRef.current = false;
     connect();
 
     return () => {
+      isUnmountedRef.current = true;
       if (reconnectTimeoutRef.current) {
         clearTimeout(reconnectTimeoutRef.current);
+        reconnectTimeoutRef.current = null;
       }
       if (wsRef.current) {
+        // Clear listeners to avoid onclose trigger when intentionally tearing down
+        wsRef.current.onopen = null;
+        wsRef.current.onmessage = null;
+        wsRef.current.onerror = null;
+        wsRef.current.onclose = null;
         wsRef.current.close();
+        wsRef.current = null;
       }
+      subscribedRoomsRef.current.clear();
     };
   }, [connect]);
+
+  // Handle room subscriptions dynamically without reconnecting
+  const roomsKey = Array.isArray(rooms) ? [...rooms].sort().join(',') : '';
+
+  useEffect(() => {
+    const socket = wsRef.current;
+    if (!socket || socket.readyState !== WebSocket.OPEN) return;
+
+    const currentRooms = subscribedRoomsRef.current;
+    const targetRooms = new Set((rooms || []).filter(Boolean));
+
+    // Unsubscribe from rooms no longer in target
+    currentRooms.forEach((room) => {
+      if (!targetRooms.has(room)) {
+        socket.send(JSON.stringify({ action: 'UNSUBSCRIBE', room }));
+        currentRooms.delete(room);
+      }
+    });
+
+    // Subscribe to new rooms
+    targetRooms.forEach((room) => {
+      if (!currentRooms.has(room)) {
+        socket.send(JSON.stringify({ action: 'SUBSCRIBE', room }));
+        currentRooms.add(room);
+      }
+    });
+  }, [roomsKey]);
 
   const send = useCallback((data) => {
     if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
@@ -84,13 +156,25 @@ export const useWebSocket = (rooms = [], onEvent) => {
     }
   }, []);
 
-  const subscribe = useCallback((room) => {
-    send({ action: 'SUBSCRIBE', room });
-  }, [send]);
+  const subscribe = useCallback(
+    (room) => {
+      if (room) {
+        subscribedRoomsRef.current.add(room);
+        send({ action: 'SUBSCRIBE', room });
+      }
+    },
+    [send]
+  );
 
-  const unsubscribe = useCallback((room) => {
-    send({ action: 'UNSUBSCRIBE', room });
-  }, [send]);
+  const unsubscribe = useCallback(
+    (room) => {
+      if (room) {
+        subscribedRoomsRef.current.delete(room);
+        send({ action: 'UNSUBSCRIBE', room });
+      }
+    },
+    [send]
+  );
 
   return {
     isConnected,
