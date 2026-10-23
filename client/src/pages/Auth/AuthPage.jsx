@@ -560,7 +560,7 @@ export default function AuthPage() {
                   className="btn-inline-demo"
                   onClick={() => handleFillDemo(staffRole === 'DOCTOR' ? 'doctor' : 'receptionist')}
                 >
-                  <Sparkles size={13} /> Autofill Demo {staffRole === 'DOCTOR' ? 'Doctor' : 'Receptionist'} Credentials
+               Autofill Demo {staffRole === 'DOCTOR' ? 'Doctor' : 'Receptionist'} Credentials
                 </button>
               </div>
 
