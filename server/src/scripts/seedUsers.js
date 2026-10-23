@@ -22,11 +22,11 @@ async function seedUsers() {
   const passwordHash = await bcrypt.hash(defaultPassword, 12);
 
   // 1. Doctor: Dr. Sarah Jenkins (Cardiology)
-  const doctorExists = await User.findOne({ email: 'doctor@qureflow.com' });
+  const doctorExists = await User.findOne({ email: { $in: ['sarah.jenkins@qureflow.com', 'doctor@qureflow.com'] } });
   if (!doctorExists) {
     const doctor = await User.create({
       name: 'Dr. Sarah Jenkins',
-      email: 'doctor@qureflow.com',
+      email: 'sarah.jenkins@qureflow.com',
       passwordHash,
       role: 'DOCTOR',
       clinicId: clinic._id,
@@ -34,6 +34,21 @@ async function seedUsers() {
       availability: { status: 'AVAILABLE', breakUntil: null },
     });
     console.log(`[Seed] Created Doctor: ${doctor.name} (${doctor.email})`);
+  } else if (doctorExists.email !== 'sarah.jenkins@qureflow.com') {
+    // Keep an alias or create sarah.jenkins
+    const sarah = await User.findOne({ email: 'sarah.jenkins@qureflow.com' });
+    if (!sarah) {
+      await User.create({
+        name: 'Dr. Sarah Jenkins',
+        email: 'sarah.jenkins@qureflow.com',
+        passwordHash,
+        role: 'DOCTOR',
+        clinicId: clinic._id,
+        specialization: 'Cardiology & General Medicine',
+        availability: { status: 'AVAILABLE', breakUntil: null },
+      });
+      console.log(`[Seed] Created Doctor: Dr. Sarah Jenkins (sarah.jenkins@qureflow.com)`);
+    }
   }
 
   // 2. Doctor: Dr. Michael Chen (Pediatrics)
@@ -64,13 +79,13 @@ async function seedUsers() {
     console.log(`[Seed] Created Receptionist: ${reception.name} (${reception.email})`);
   }
 
-  // 4. Test Patient: John Doe
-  const patientExists = await User.findOne({ email: 'john@example.com' });
+  // 4. Test Patient: John Doe / patient@qureflow.com
+  const patientExists = await User.findOne({ email: 'patient@qureflow.com' });
   if (!patientExists) {
     const patient = await User.create({
-      name: 'John Doe',
-      username: 'johndoe',
-      email: 'john@example.com',
+      name: 'Test Patient',
+      username: 'testpatient',
+      email: 'patient@qureflow.com',
       passwordHash,
       role: 'PATIENT',
     });

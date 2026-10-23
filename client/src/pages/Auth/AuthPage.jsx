@@ -13,6 +13,7 @@ import {
   ArrowRight,
   CheckCircle2,
   Lock,
+  Sparkles,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../api/client';
@@ -165,6 +166,42 @@ export default function AuthPage() {
     }
   };
 
+  // Autofill Demo Credentials
+  const handleFillDemo = (type) => {
+    setErrorMsg('');
+    if (type === 'receptionist') {
+      setRole('staff');
+      setStaffRole('RECEPTIONIST');
+      setStaffLoginForm({
+        email: 'reception@qureflow.com',
+        password: 'password123',
+      });
+      if (clinics.length > 0 && !selectedClinicId) {
+        setSelectedClinicId(clinics[0]._id);
+      }
+      setSuccessMsg('Filled Receptionist demo credentials (reception@qureflow.com / password123)');
+    } else if (type === 'doctor') {
+      setRole('staff');
+      setStaffRole('DOCTOR');
+      setStaffLoginForm({
+        email: 'sarah.jenkins@qureflow.com',
+        password: 'password123',
+      });
+      if (clinics.length > 0 && !selectedClinicId) {
+        setSelectedClinicId(clinics[0]._id);
+      }
+      setSuccessMsg('Filled Doctor demo credentials (sarah.jenkins@qureflow.com / password123)');
+    } else if (type === 'patient') {
+      setRole('patient');
+      setPatientMode('login');
+      setPatientLoginForm({
+        identifier: 'patient@qureflow.com',
+        password: 'password123',
+      });
+      setSuccessMsg('Filled Patient demo credentials (patient@qureflow.com / password123)');
+    }
+  };
+
   return (
     <div className="auth-page-container">
       <div className="auth-card-wrapper">
@@ -204,6 +241,7 @@ export default function AuthPage() {
             <span>{successMsg}</span>
           </motion.div>
         )}
+
 
         {/* Role Segmented Switcher */}
         <div className="role-segmented-control">
@@ -301,6 +339,16 @@ export default function AuthPage() {
                           {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                         </button>
                       </div>
+                    </div>
+
+                    <div className="demo-inline-fill-bar">
+                      <button
+                        type="button"
+                        className="btn-inline-demo"
+                        onClick={() => handleFillDemo('patient')}
+                      >
+                      Autofill Demo Patient Credentials
+                      </button>
                     </div>
 
                     <button
@@ -504,6 +552,16 @@ export default function AuthPage() {
                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
+              </div>
+
+              <div className="demo-inline-fill-bar">
+                <button
+                  type="button"
+                  className="btn-inline-demo"
+                  onClick={() => handleFillDemo(staffRole === 'DOCTOR' ? 'doctor' : 'receptionist')}
+                >
+                  <Sparkles size={13} /> Autofill Demo {staffRole === 'DOCTOR' ? 'Doctor' : 'Receptionist'} Credentials
+                </button>
               </div>
 
               <button
